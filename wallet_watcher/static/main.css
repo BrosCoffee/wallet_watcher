@@ -1,0 +1,58 @@
+form{
+    width: 60%;
+    padding: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left:auto;
+    margin-right:auto;
+    border: solid #ddd 1px;
+    border-radius: 10px;
+}
+
+.jumbotron{
+    background: url("img/background.jpg") no-repeat center center / cover;
+    height: auto;
+    width: 100%;
+}
+
+.pic-size{
+    height: auto;
+    width: 300px;
+}
+
+.row .col-sm-12{
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+.navbar{
+    padding: 20px;
+}
+
+.square {
+		height: 300px;
+		width: 300px;
+		background-color: #afa;
+	    display: inline-block;
+}
+
+.dot {
+		height: 300px;
+		width: 300px;
+		border-radius: 50%;
+		background-color: #ffa;
+	    display: inline-block;
+}
+
+.pic_source{
+    margin-top:8px;
+    font-size:8px;
+    color: #aaa;
+    text-align: left;
+}
+
+
+textarea {
+  resize: none;
+}
+
+

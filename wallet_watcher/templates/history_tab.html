@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card text-center mt-4 mb-4">
+  <div class="card-header">
+	<ul class="nav nav-tabs card-header-tabs">
+	  <li class="nav-item">
+		<a class="nav-link" href="#">Day</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link active" href="#">Week</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="#">Month</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="#">Year</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="#">All</a>
+	  </li>
+	</ul>
+  </div>
+  <div class="card-body">
+	<div class="row">
+		<div class="col-lg-6 col-sm-12">
+			<p>Pie Chart</p>
+			<span class="dot"></span>
+		</div>
+		<div class="col-lg-6 col-sm-12">
+			<p>Line Chart</p>
+			<span class="square"></span>
+		</div>
+	</div>
+  </div>
+</div>
+{% endblock content %}
