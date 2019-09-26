@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm
-from wallet_watcher import app, mongo
+from wallet_watcher import app, mongo, bcrypt
 import time
 
 
@@ -24,9 +24,15 @@ def contact():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    connection = mongo.db.users
     if form.validate_on_submit():
-        flash('Welcome back, {}!'.format(form.email.data), 'success')
-        return redirect(url_for('enter'))
+        user = connection.find({'email': form.email.data})
+        password = user['password']
+        if user and bcrypt.check_password_hash(password, form.password.data):
+            flash('Welcome back, {}!'.format(form.email.data), 'success')
+            return redirect(url_for('enter'))
+        else:
+            flash('Login failed, please check username and password.' 'danger')
     return render_template('login.html', title='Login', form=form)
 
 
@@ -36,13 +42,14 @@ def register():
     connection = mongo.db.users
 
     if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
+
         connection.insert({'user_name': request.form.get('username'),
                            'first_name': request.form.get('first_name'),
                            'last_name': request.form.get('last_name'),
                            'email': request.form.get('email'),
-                           'password': request.form.get('password'),
-                           'confirm_password': request.form.get('confirm_password')})
-        flash('Account created for {}!'.format(form.username.data), 'success')
+                           'password': hashed_password})
+        flash('{}, your account has been created!'.format(form.first_name.data), 'success')
         return redirect(url_for('enter'))
     return render_template('register.html', title='Register', form=form)
 
