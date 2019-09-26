@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField,\
-                    TextAreaField, SelectField, DecimalField
-from wtforms.validators import InputRequired, DataRequired, Length, Email, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, \
+    TextAreaField, SelectField, DecimalField
+from wtforms.validators import InputRequired, DataRequired, Length, Email, EqualTo, ValidationError
+import pymongo
 
 
 class RegistrationForm(FlaskForm):
@@ -19,6 +20,20 @@ class RegistrationForm(FlaskForm):
                                      validators=[InputRequired(), Length(min=6, max=20),
                                                  EqualTo('password', 'Passwords must match.')])
     submit = SubmitField('Sign up')
+
+    client = pymongo.MongoClient(host='localhost', port=27017)
+    db = client.wallet_watcher
+    collection = db.users
+
+    def validate_username(self, username):
+        result = self.collection.find_one({'user_name': username.data})
+        if result is not None:
+            raise ValidationError('The username is taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        result = self.collection.find_one({'email': email.data})
+        if result is not None:
+            raise ValidationError('The email is taken. Please choose a different one.')
 
 
 class LoginForm(FlaskForm):
