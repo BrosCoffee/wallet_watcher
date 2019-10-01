@@ -23,8 +23,16 @@
 	      <a class="nav-item nav-link" href="{{ url_for('contact') }}">Contact</a>
 	    </div>
 	    <div class="navbar-nav">
-	      <a class="nav-item nav-link" href="{{ url_for('login') }}">Login <span class="sr-only">(current)</span></a>
-	      <a class="nav-item nav-link" href="{{ url_for('register') }}">Register <span class="sr-only">(current)</span></a>
+			{% if current_user.is_authenticated %}
+				<a class="nav-item nav-link" href="{{ url_for('enter') }}">Enter <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link" href="{{ url_for('login') }}">Account <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link" href="">History <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link" href="{{ url_for('summary') }}">Summary <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout <span class="sr-only">(current)</span></a>
+			{% else %}
+	      		<a class="nav-item nav-link" href="{{ url_for('login') }}">Login <span class="sr-only">(current)</span></a>
+	      		<a class="nav-item nav-link" href="{{ url_for('register') }}">Register <span class="sr-only">(current)</span></a>
+			{% endif %}
 	    </div>
 	  </div>
 	</nav>
@@ -47,7 +55,7 @@
  	{% block content %}{% endblock %}
 	<!-- Footer -->  
     <div class=" card bg-dark text-center p-2" style="margin-top: 4px; color: #fff; font-style: bold;">
-      &copy; 2019 copyright by Raymond C. Yang
+      &copy; 2019 copyright by Raymond & Meliza
     </div>
     <!-- Footer -->
     <!-- Optional JavaScript -->
