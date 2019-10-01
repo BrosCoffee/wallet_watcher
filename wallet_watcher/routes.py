@@ -1,9 +1,9 @@
-from flask import render_template, url_for, flash, redirect, request, session
+from flask import render_template, url_for, flash, redirect, request
 from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm
 from wallet_watcher import app, mongo, bcrypt, login_manager
 import time
 import pymongo
-from flask_login import UserMixin, current_user, login_user, logout_user
+from flask_login import UserMixin, current_user, login_user, logout_user, login_required
 
 client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.wallet_watcher
@@ -67,14 +67,16 @@ def login():
             user_obj = User(username=user['user_name'])
             print(form.remember.data)
             login_user(user_obj, remember=form.remember.data)
+            next_page = request.args.get('next')
             flash('Welcome back, {}!'.format(user['first_name']), 'success')
-            return redirect(url_for('enter'))
+            return redirect(next_page) if next_page else redirect(url_for('history'))
         elif User.check_password() is False:
             flash('The password is incorrect.', 'danger')
     return render_template('login.html', title='Sign In', form=form)
 
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
@@ -101,6 +103,7 @@ def register():
 
 
 @app.route('/enter', methods=['GET', 'POST'])
+@login_required
 def enter():
     form = EnterForm()
     connection = mongo.db.records
@@ -123,15 +126,18 @@ def enter():
 
 
 @app.route('/account')
+@login_required
 def account():
-    return render_template('account.html')
+    return render_template('account.html', title='Account')
 
 
 @app.route('/history')
+@login_required
 def history():
-    return render_template('history.html')
+    return render_template('history.html', title='History')
 
 
 @app.route('/summary')
+@login_required
 def summary():
-    return render_template('summary.html')
+    return render_template('summary.html', title='Summary')
