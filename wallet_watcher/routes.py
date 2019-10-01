@@ -134,7 +134,10 @@ def account():
 @app.route('/history')
 @login_required
 def history():
-    return render_template('history.html', title='History')
+    connection = mongo.db.records
+    record = connection.find({'user_name': current_user.username}).sort([("date", pymongo.DESCENDING), ("time", pymongo.DESCENDING)])
+    print(record)
+    return render_template('history.html', title='History', posts=record)
 
 
 @app.route('/summary')

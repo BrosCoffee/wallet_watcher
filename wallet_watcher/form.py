@@ -71,7 +71,7 @@ class EnterForm(FlaskForm):
                   ('Others', 'Others')]
     category = SelectField('Expense Categories',
                            choices=categories)
-    currencies = [('USD', 'USD $'), ('NTD', 'NTD $'), ('JPY', 'JPY ¥'), ('EUR', 'EUR €')]
+    currencies = [('USD $', 'USD $'), ('NTD $', 'NTD $'), ('JPY ¥', 'JPY ¥'), ('EUR €', 'EUR €')]
 
     currency = SelectField('Currency',
                            choices=currencies,

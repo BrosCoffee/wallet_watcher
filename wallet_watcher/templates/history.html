@@ -1,6 +1,18 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h1>This is the history page.</h1>
+<h3>Hello, {{ current_user.username }}</h3>
 
+{% for record in posts %}
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+          <h4 class="card-title">{{ record['category'] }}</h4>
+          <h6 class="card-subtitle mb-2 text-muted">{{ record['date'] }} {{ record['time'] }}</h6>
+          <h5 class="card-subtitle mb-2">{{ record['currency'] }}{{ record['amount'] }}</h5>
+          <p class="card-text">{{ record['note'] }}</p>
+          <a href="#" class="card-link">Edit</a>
+          <a href="#" class="card-link">Delete</a>
+      </div>
+    </div>
+{% endfor %}
 {% endblock content %}
