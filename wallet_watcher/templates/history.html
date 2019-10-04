@@ -1,18 +1,27 @@
 {% extends "layout.html" %}
 {% block content %}
+<div class="container">
+    <h1>{{ current_user.username}}</h1>
+    <div class="row">
+        {% for record in records %}
+            <div class="card mb-3 mr-2" style="width: 16rem;">
+                <div class="card-header" style="text-align: center">
+                    <h4 class="card-title mt-1 ml-2">{{ record['category'] }}</h4>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">{{ record['date'] }} {{ record['time'] }}</h6>
+                    <h5 class="card-subtitle mb-2">{{ record['currency'] }}{{ record['amount'] }}</h5>
+                    <p class="card-text">{{ record['note'] }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="/edit/{{ record['_id'] }}">
+                        <p class="card-subtitle mt-1 text-muted" style="font-size:8px; text-align: right">Edit</p>
+                    </a>
+                </div>
+            </div>
 
-<h3>Hello, {{ current_user.username }}</h3>
-
-{% for record in posts %}
-    <div class="card" style="width: 18rem;">
-      <div class="card-body">
-          <h4 class="card-title">{{ record['category'] }}</h4>
-          <h6 class="card-subtitle mb-2 text-muted">{{ record['date'] }} {{ record['time'] }}</h6>
-          <h5 class="card-subtitle mb-2">{{ record['currency'] }}{{ record['amount'] }}</h5>
-          <p class="card-text">{{ record['note'] }}</p>
-          <a href="#" class="card-link">Edit</a>
-          <a href="#" class="card-link">Delete</a>
-      </div>
+        {% endfor %}
     </div>
-{% endfor %}
+</div>
+
 {% endblock content %}

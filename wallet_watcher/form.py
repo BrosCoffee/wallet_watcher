@@ -3,6 +3,9 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, \
     TextAreaField, SelectField, DecimalField
 from wtforms.validators import InputRequired, DataRequired, Length, Email, EqualTo, ValidationError
 import pymongo
+from wallet_watcher import mongo
+
+connection = mongo.db.records
 
 
 class RegistrationForm(FlaskForm):
@@ -83,3 +86,31 @@ class EnterForm(FlaskForm):
     note = TextAreaField('Note (Optional)',
                          render_kw={"placeholder": "ex: Miller's Ale house for dinner."})
     submit = SubmitField('Submit')
+
+
+class EditForm(FlaskForm):
+    categories = [('Food & Dining', 'Food & Dining'), ('Bills & Utilities', 'Bills & Utilities'),
+                  ('Shopping', 'Shopping'), ('Entertainment', 'Entertainment'),
+                  ('Personal Care', 'Personal Care'), ('Health & Fitness', 'Health & Fitness'),
+                  ('Transport & Auto', 'Transport & Auto'), ('Fees & Charges', 'Fees & Charges'),
+                  ('Education', 'Education'), ('Gifts & Donation', 'Gifts & Donation'),
+                  ('Business Services', 'Business Services'), ('Investment', 'Investment'),
+                  ('Travel', 'Travel'), ('Kids & Elderly', 'Kids & Elderly'), ('Taxes', 'Taxes'),
+                  ('Others', 'Others')]
+    category = SelectField('Expense Categories',
+                           choices=categories)
+    currencies = [('USD $', 'USD $'), ('NTD $', 'NTD $'), ('JPY ¥', 'JPY ¥'), ('EUR €', 'EUR €')]
+
+    currency = SelectField('Currency',
+                           choices=currencies,
+                           validators=[InputRequired()])
+
+    amount = DecimalField('Amount',
+                          validators=[DataRequired()])
+    note = TextAreaField('Note (Optional)')
+    object_id = StringField()
+    submit_update = SubmitField('Update')
+
+
+class DeleteForm(FlaskForm):
+    submit_delete = SubmitField('Delete')

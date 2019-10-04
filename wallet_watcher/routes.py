@@ -1,9 +1,10 @@
 from flask import render_template, url_for, flash, redirect, request
-from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm
+from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm, EditForm, DeleteForm
 from wallet_watcher import app, mongo, bcrypt, login_manager
 import time
 import pymongo
 from flask_login import UserMixin, current_user, login_user, logout_user, login_required
+from bson.objectid import ObjectId
 
 client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.wallet_watcher
@@ -56,8 +57,6 @@ def load_user(username):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print(current_user.is_active)
-    print(current_user.get_id)
     if current_user.is_authenticated:
         return redirect(url_for('enter'))
     form = LoginForm()
@@ -65,7 +64,6 @@ def login():
         user = mongo.db.users.find_one({"email": form.email.data})
         if user and User.check_password():
             user_obj = User(username=user['user_name'])
-            print(form.remember.data)
             login_user(user_obj, remember=form.remember.data)
             next_page = request.args.get('next')
             flash('Welcome back, {}!'.format(user['first_name']), 'success')
@@ -122,7 +120,7 @@ def enter():
             flash('The New Record Has Been Added!', 'success')
             return redirect(url_for('enter'))
 
-    return render_template('enter_form.html', title='Enter_Form', form=form)
+    return render_template('enter_form.html', title='Enter Form', form=form)
 
 
 @app.route('/account')
@@ -131,13 +129,44 @@ def account():
     return render_template('account.html', title='Account')
 
 
-@app.route('/history')
+@app.route('/history', methods=['GET', 'POST'])
 @login_required
 def history():
+    form = EditForm()
     connection = mongo.db.records
-    record = connection.find({'user_name': current_user.username}).sort([("date", pymongo.DESCENDING), ("time", pymongo.DESCENDING)])
-    print(record)
-    return render_template('history.html', title='History', posts=record)
+    # Descending
+    records = connection.find({'user_name': current_user.username}).sort([("date", pymongo.DESCENDING), ("time", pymongo.DESCENDING)])
+    return render_template('history.html', title='History', records=records, form=form)
+
+
+@app.route('/edit/<record_id>', methods=['GET', 'POST'])
+@login_required
+def edit(record_id):
+    form = EditForm()
+    delete_form = DeleteForm()
+    connection = mongo.db.records
+    record = connection.find_one({'_id': ObjectId(record_id)})
+    if request.method == 'GET':
+        form.category.data = record['category']
+        form.currency.data = record['currency']
+        form.amount.data = float(record['amount'])
+        form.note.data = record['note']
+    elif form.submit_update.data and form.validate_on_submit():
+        connection.update({'_id': ObjectId(record_id)}, {'$set':
+            {
+                'category': request.form.get('category'),
+                'currency': request.form.get('currency'),
+                'amount': request.form.get('amount'),
+                'note': request.form.get('note')
+            }
+        })
+        flash('The Record Has Been Updated!', 'success')
+        return redirect(url_for('history'))
+    elif delete_form.submit_delete.data and delete_form.is_submitted():
+        connection.delete_one({'_id': ObjectId(record_id)})
+        flash('The Record Has Been Deleted!', 'success')
+        return redirect(url_for('history'))
+    return render_template('edit.html', title='Edit', form=form, record=record, delete_form=delete_form)
 
 
 @app.route('/summary')
