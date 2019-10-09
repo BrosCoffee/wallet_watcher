@@ -1,7 +1,8 @@
 import os
 import secrets
 from flask import render_template, url_for, flash, redirect, request
-from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm, EditForm, DeleteForm, UpdateAccountForm
+from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm, EditForm, DeleteForm, \
+    UpdateAccountForm
 from wallet_watcher import app, mongo, bcrypt, login_manager
 import time
 import pymongo
@@ -131,7 +132,7 @@ def save_image(form_image):
     picture_fn = random_rex + f_ext
     picture_path = os.path.join(app.root_path, 'static/profile_img', picture_fn)
     form_image.save(picture_path)
-    return 'static/profile_img/' + picture_fn
+    return '/static/profile_img/' + picture_fn
 
 
 @app.route('/account', methods=['GET', 'POST'])
@@ -146,13 +147,14 @@ def account():
         form.last_name.data = user['last_name']
         form.email.data = user['email']
     elif form.validate_on_submit():
-        # Adding the new profile image
         if form.profile_image_name.data:
             image_file_name = save_image(form.profile_image_name.data)
             connection.update({'_id': ObjectId(user['_id'])}, {'$set':
                 {
                     'profile_image_name': image_file_name  # profile_image
                 }})
+            # flash('The Profile Image Has Been Updated!', 'success')
+            # return redirect(url_for('account'))
         connection.update({'_id': ObjectId(user['_id'])}, {'$set':
             {
                 'first_name': form.first_name.data,  # request.form.get('first_name')
@@ -171,7 +173,8 @@ def history():
     form = EditForm()
     connection = mongo.db.records
     # Descending
-    records = connection.find({'user_name': current_user.username}).sort([("date", pymongo.DESCENDING), ("time", pymongo.DESCENDING)])
+    records = connection.find({'user_name': current_user.username}).sort(
+        [("date", pymongo.DESCENDING), ("time", pymongo.DESCENDING)])
     return render_template('history.html', title='History', records=records, form=form)
 
 

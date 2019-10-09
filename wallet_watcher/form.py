@@ -6,6 +6,7 @@ from wtforms.validators import InputRequired, DataRequired, Length, Email, \
 from flask_wtf.file import FileField, FileAllowed
 import pymongo
 from wallet_watcher import mongo
+from flask_login import current_user
 
 connection = mongo.db.records
 
@@ -59,8 +60,10 @@ class UpdateAccountForm(FlaskForm):
 
     def validate_email(self, email):
         result = self.collection.find_one({'email': email.data})
+        current = self.collection.find_one({'user_name': current_user.username})
         if result is not None:
-            raise ValidationError('The email is taken. Please choose a different one.')
+            if email.data != current['email']:
+                raise ValidationError('The email is taken. Please choose a different one.')
 
 
 class LoginForm(FlaskForm):
