@@ -12,23 +12,23 @@
   </head>
   <body>
   	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-	  <a class="navbar-brand" href="{{ url_for('home') }}">Wallet Watcher</a>
+	  <a class="navbar-brand ml-1" href="{{ url_for('home') }}">Wallet Watcher</a>
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
 	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 	    <div class="navbar-nav mr-auto">
-	      <a class="nav-item nav-link" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
-	      <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
-	      <a class="nav-item nav-link" href="{{ url_for('contact') }}">Contact</a>
+	      <a class="nav-item nav-link ml-3" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
+	      <a class="nav-item nav-link ml-3" href="{{ url_for('about') }}">About</a>
+	      <a class="nav-item nav-link ml-3" href="{{ url_for('contact') }}">Contact</a>
 	    </div>
 	    <div class="navbar-nav">
 			{% if current_user.is_authenticated %}
-				<a class="nav-item nav-link" href="{{ url_for('enter') }}">Enter <span class="sr-only">(current)</span></a>
-				<a class="nav-item nav-link" href="{{ url_for('history') }}">History <span class="sr-only">(current)</span></a>
-				<a class="nav-item nav-link" href="{{ url_for('summary') }}">Summary <span class="sr-only">(current)</span></a>
-				<a class="nav-item nav-link" href="{{ url_for('account') }}">Account <span class="sr-only">(current)</span></a>
-				<a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout <span class="sr-only">(current)</span></a>
+				<a href="{{ url_for('enter') }}" class="ml-2"><button type="button" class="btn btn-outline-success mr-2">Enter</button></a>
+				<a class="nav-item nav-link ml-3" href="{{ url_for('history') }}">History <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link ml-3" href="{{ url_for('summary') }}">Summary <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link ml-3" href="{{ url_for('account') }}">Account <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link ml-3" href="{{ url_for('logout') }}">Logout <span class="sr-only">(current)</span></a>
 			{% else %}
 	      		<a class="nav-item nav-link" href="{{ url_for('login') }}">Login <span class="sr-only">(current)</span></a>
 	      		<a class="nav-item nav-link" href="{{ url_for('register') }}">Register <span class="sr-only">(current)</span></a>
@@ -37,22 +37,24 @@
 	  </div>
 	</nav>
   
-    <div class="jumbotron jumbotron-fluid pb-2">
+    <div class="jumbotron jumbotron-fluid pb-2" style="margin-bottom: 0px;">
   	  <div class="container">
   	    <h1 class="display-5" style="color: #fff">Your Wallet Watcher</h1>
   	    <p class="ml-4" style="color: #fff">The Expense Tracking Manager</p>
   	  </div>
   	</div>
-	{% with messages = get_flashed_messages(with_categories=true) %}
-		{% if messages %}
-			{% for category, message in messages %}
-				<div class="alert alert-{{ category }}">
-					{{ message }}
-				</div>
-			{% endfor %}
-		{% endif %}
-	{% endwith %}
- 	{% block content %}{% endblock %}
+	<div class="bg-light">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ category }}">
+						{{ message }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+		{% block content %}{% endblock %}
+	</div>
 	<!-- Footer -->  
     <div class=" card bg-dark text-center p-2" style="margin-top: 4px; color: #fff; font-style: bold;">
       &copy; 2019 copyright by Raymond & Meliza

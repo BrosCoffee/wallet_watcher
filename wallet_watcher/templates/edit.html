@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container mb-4">
+<div class="container">
 	<div class="row">
 		<div class="col-lg-7 col-sm-12 mx-auto">
-			<form method="post" action="/edit/{{ record['_id'] }}" style="width: 100%;">
+			<form method="post" action="/edit/{{ record['_id'] }}" style="width: 100%; background-color: #eef;">
 				{{ form.hidden_tag() }}
 				<div class="form-group">
 					{{ form.category.label(class="form-control-label") }}
@@ -30,6 +30,7 @@
 					{{ form.note(class="form-control", rows='6') }}
 				</div>
 				<div class="form-group">
+					<a href='/history' class="button btn btn-secondary btn-sm">Cancel</a>
 					{{ form.submit_update(class="btn btn-primary btn-sm") }}
                     <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
 				</div>

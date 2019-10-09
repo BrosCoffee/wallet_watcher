@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container mb-4">
+<div class="container">
     <div class="row">
         <div class="col-lg-6 col-sm-12">
             <h3 class="text-center mb-4">Getting Start to Track Your Expenses Today!</h3>
-            <form method="post" action="" style="width: 100%;">
+            <form method="post" action="" style="width: 100%; background-color: #eef;">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     {{ form.username.label(class="form-control-label") }}
@@ -51,8 +51,6 @@
                         {% endif %}
                     </div>
                 </div>
-
-
                 <div class="form-group">
                     {{ form.email.label(class="form-control-label") }}
 
@@ -105,6 +103,4 @@
         </div>
     </div>
 </div>
-
-
 {% endblock content %}

@@ -1,23 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container mb-4">
+<div class="container">
     <div class="row">
         <div class="col-lg-7 col-sm-12 mx-auto">
             <h3 class="mb-4">Member Log In</h3>
-            <form method="post" action="" style="width: 100%;">
+            <form method="post" action="" style="width: 100%; background-color: #eef;">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
-                    {{ form.email.label(class="form-control-label") }}
+                    {{ form.username.label(class="form-control-label") }}
 
-                    {% if form.email.errors %}
-                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
+                            {% for error in form.username.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.email(class="form-control form-control-lg") }}
+                        {{ form.username(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
                 <div class="form-group">

@@ -29,15 +29,15 @@ form{
 }
 
 .square {
-		height: 300px;
-		width: 300px;
+		height: 350px;
+		width: 350px;
 		background-color: #afa;
 	    display: inline-block;
 }
 
 .dot {
-		height: 300px;
-		width: 300px;
+		height: 350px;
+		width: 350px;
 		border-radius: 50%;
 		background-color: #ffa;
 	    display: inline-block;

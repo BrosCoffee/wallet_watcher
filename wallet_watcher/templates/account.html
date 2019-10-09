@@ -1,16 +1,97 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h1>{{ current_user.username }}</h1>
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 mx-auto">
+            <form method="post" action="" enctype="multipart/form-data" style="width: 100%; background-color: #eef;">
+                {{ form.hidden_tag() }}
+                <legend class="border-bottom mb-4">Account Info</legend>
+                <div class="content-section">
+                  <div class="media">
+                    <img class="rounded-circle account-img ml-4" style="width: 100px;" src="{{ user.profile_image_name }}">
+                    <div class="media-body ml-4">
+                        <h2 class="account-heading mb-4">{{ current_user.username }}</h2>
+                        <p class="text-secondary">{{ user.first_name }} {{ user.last_name }}</p>
+                        <p class="text-secondary">{{ user.email }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.first_name.label(class="form-control-label") }}
 
-<div class="content-section">
-  <div class="media">
-    <img class="rounded-circle account-img" src="{{ image_file }}">
-    <div class="media-body">
-      <h2 class="account-heading">{{ current_user.username }}</h2>
-      <p class="text-secondary">{{ current_user.email }}</p>
+                        {% if form.first_name.errors %}
+                            {{ form.first_name(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.first_name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.first_name(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.last_name.label(class="form-control-label") }}
+
+                        {% if form.last_name.errors %}
+                            {{ form.last_name(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.last_name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.last_name(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+
+                    {% if form.email.errors %}
+                        {{ form.email(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(class="form-control form-control-lg") }}
+                    {% endif%}
+                </div>
+                <div class="form-group">
+                    {{ form.profile_image_name.label(class="form-control-label") }}
+                    {{ form.profile_image_name(class="form-control-file") }}
+                    {% if form.profile_image_name.errors %}
+                        {% for error in form.profile_image_name.errors %}
+                    <span class="text-danger">{{ error }}</span></br>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group mt-4">
+                    <button type="button" class="btn btn-info btn-sm m-1" data-toggle="modal" data-target="#editModal">Update</button>
+                </div>
+                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="editModalLabel">Are You Satisfied For The Change?</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            {{ form.submit(class="btn btn-info") }}
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 </div>
 
 {% endblock content %}

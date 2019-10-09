@@ -1,25 +1,45 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        {% for record in records %}
-            <div class="card mb-3 mr-2" style="width: 16rem;">
-                <div class="card-header" style="text-align: center">
-                    <h4 class="card-title mt-1 ml-2">{{ record['category'] }}</h4>
+<div class="card text-center">
+  <div class="card-header">
+	<ul class="nav nav-tabs card-header-tabs">
+	  <li class="nav-item">
+		<a class="nav-link" href="#">3-Day</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link active" href="#">Week</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="#">Month</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="#">Year</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="#">All</a>
+	  </li>
+	</ul>
+  </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            {% for record in records %}
+                <div class="card mr-2 mt-2" style="width: 17rem; background-color: #eef;">
+                    <div class="card-header" style="text-align: center">
+                        <h4 class="card-title mt-1 ml-2">{{ record['category'] }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">{{ record['date'] }} {{ record['time'] }}</h6>
+                        <h5 class="card-subtitle mb-2">{{ record['currency'] }}{{ record['amount'] }}</h5>
+                        <p class="card-text">{{ record['note'] }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/edit/{{ record['_id'] }}">
+                            <p class="card-subtitle mt-1 text-muted" style="font-size:8px; text-align: right">Edit</p>
+                        </a>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">{{ record['date'] }} {{ record['time'] }}</h6>
-                    <h5 class="card-subtitle mb-2">{{ record['currency'] }}{{ record['amount'] }}</h5>
-                    <p class="card-text">{{ record['note'] }}</p>
-                </div>
-                <div class="card-footer">
-                    <a href="/edit/{{ record['_id'] }}">
-                        <p class="card-subtitle mt-1 text-muted" style="font-size:8px; text-align: right">Edit</p>
-                    </a>
-                </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 </div>
-
 {% endblock content %}

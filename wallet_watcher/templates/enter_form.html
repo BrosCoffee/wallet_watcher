@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container mb-4">
+<div class="container">
 	<div class="row">
 		<div class="col-lg-7 col-sm-12 mx-auto">
-			<form method="post" action="/enter" style="width: 100%;">
+			<form method="post" action="/enter" style="width: 100%; background-color: #eef;">
 				{{ form.hidden_tag() }}
 				<div class="form-group">
 					{{ form.category.label(class="form-control-label") }}

@@ -1,5 +1,7 @@
+import os
+import secrets
 from flask import render_template, url_for, flash, redirect, request
-from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm, EditForm, DeleteForm
+from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm, EditForm, DeleteForm, UpdateAccountForm
 from wallet_watcher import app, mongo, bcrypt, login_manager
 import time
 import pymongo
@@ -38,7 +40,7 @@ class User(UserMixin):
     def check_password():
         form = LoginForm()
         collection = db.users
-        result = collection.find_one({'email': form.email.data})
+        result = collection.find_one({'user_name': form.username.data})
         try:
             password = result['password']
             return bcrypt.check_password_hash(password, form.password.data)
@@ -61,13 +63,13 @@ def login():
         return redirect(url_for('enter'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = mongo.db.users.find_one({"email": form.email.data})
+        user = mongo.db.users.find_one({"user_name": form.username.data})
         if user and User.check_password():
             user_obj = User(username=user['user_name'])
             login_user(user_obj, remember=form.remember.data)
             next_page = request.args.get('next')
             flash('Welcome back, {}!'.format(user['first_name']), 'success')
-            return redirect(next_page) if next_page else redirect(url_for('history'))
+            return redirect(next_page) if next_page else redirect(url_for('enter'))
         elif User.check_password() is False:
             flash('The password is incorrect.', 'danger')
     return render_template('login.html', title='Sign In', form=form)
@@ -89,8 +91,8 @@ def register():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
-
-        connection.insert({'user_name': request.form.get('username'),
+        connection.insert({'profile_image_name': '/static/profile_img/default.jpg',
+                           'user_name': request.form.get('username'),
                            'first_name': request.form.get('first_name'),
                            'last_name': request.form.get('last_name'),
                            'email': request.form.get('email'),
@@ -123,10 +125,44 @@ def enter():
     return render_template('enter_form.html', title='Enter Form', form=form)
 
 
-@app.route('/account')
+def save_image(form_image):
+    random_rex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_image.filename)
+    picture_fn = random_rex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_img', picture_fn)
+    form_image.save(picture_path)
+    return 'static/profile_img/' + picture_fn
+
+
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account')
+    form = UpdateAccountForm()
+    connection = mongo.db.users
+    user = connection.find_one({'user_name': current_user.username})
+    profile_image = url_for('static', filename='profile_img/default.jpg')
+    if request.method == 'GET':
+        form.first_name.data = user['first_name']
+        form.last_name.data = user['last_name']
+        form.email.data = user['email']
+    elif form.validate_on_submit():
+        # Adding the new profile image
+        if form.profile_image_name.data:
+            image_file_name = save_image(form.profile_image_name.data)
+            connection.update({'_id': ObjectId(user['_id'])}, {'$set':
+                {
+                    'profile_image_name': image_file_name  # profile_image
+                }})
+        connection.update({'_id': ObjectId(user['_id'])}, {'$set':
+            {
+                'first_name': form.first_name.data,  # request.form.get('first_name')
+                'last_name': form.last_name.data,  # request.form.get('last_name')
+                'email': form.email.data  # request.form.get('email')
+            }
+        })
+        flash('The Account Has Been Updated!', 'success')
+        return redirect(url_for('account'))
+    return render_template('account.html', title='Account', user=user, form=form, profile_image=profile_image)
 
 
 @app.route('/history', methods=['GET', 'POST'])
