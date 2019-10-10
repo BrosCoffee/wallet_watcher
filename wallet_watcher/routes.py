@@ -212,3 +212,127 @@ def edit(record_id):
 @login_required
 def summary():
     return render_template('summary.html', title='Summary')
+
+
+@app.route('/test', methods=['GET', 'POST'])
+@login_required
+def test():
+    form = EditForm()
+    connection = mongo.db.records
+
+    # Descending
+    # records = connection.find({'user_name': current_user.username}).sort(
+    #     [('date', pymongo.DESCENDING), ('time', pymongo.DESCENDING)])
+
+    def mongo_filter(category):
+        return connection.find({'user_name': current_user.username, 'category': category}).sort(
+            [('date', pymongo.DESCENDING), ('time', pymongo.DESCENDING)])
+
+    # Creating variables dynamically is an anti-pattern and should be avoided.
+    category_01 = mongo_filter('Food & Dining')
+    category_01_amount = 0
+    for i in category_01:
+        category_01_amount += float(i['amount'])
+    category_01_show = mongo_filter('Food & Dining').limit(4)
+
+    category_02 = mongo_filter('Bills & Utilities')
+    category_02_amount = 0
+    for i in category_02:
+        category_02_amount += float(i['amount'])
+    category_02_show = mongo_filter('Bills & Utilities').limit(4)
+
+    category_03 = mongo_filter('Shopping')
+    category_03_amount = 0
+    for i in category_03:
+        category_03_amount += float(i['amount'])
+    category_03_show = mongo_filter('Shopping').limit(4)
+
+    category_04 = mongo_filter('Entertainment')
+    category_04_amount = 0
+    for i in category_04:
+        category_04_amount += float(i['amount'])
+    category_04_show = mongo_filter('Entertainment').limit(4)
+
+    category_05 = mongo_filter('Personal Care')
+    category_05_amount = 0
+    for i in category_05:
+        category_05_amount += float(i['amount'])
+    category_05_show = mongo_filter('Personal Care').limit(4)
+
+    category_06 = mongo_filter('Health & Fitness')
+    category_06_amount = 0
+    for i in category_06:
+        category_06_amount += float(i['amount'])
+    category_06_show = mongo_filter('Health & Fitness').limit(4)
+
+    category_07 = mongo_filter('Transport & Auto')
+    category_07_amount = 0
+    for i in category_07:
+        category_07_amount += float(i['amount'])
+    category_07_show = mongo_filter('Transport & Auto').limit(4)
+
+    category_08 = mongo_filter('Fees & Charges')
+    category_08_amount = 0
+    for i in category_08:
+        category_08_amount += float(i['amount'])
+    category_08_show = mongo_filter('Fees & Charges').limit(4)
+
+    category_09 = mongo_filter('Education')
+    category_09_amount = 0
+    for i in category_09:
+        category_09_amount += float(i['amount'])
+    category_09_show = mongo_filter('Education').limit(4)
+
+    category_10 = mongo_filter('Gifts & Donation')
+    category_10_amount = 0
+    for i in category_10:
+        category_10_amount += float(i['amount'])
+    category_10_show = mongo_filter('Gifts & Donation').limit(4)
+
+    category_11 = mongo_filter('Business Services')
+    category_11_amount = 0
+    for i in category_11:
+        category_11_amount += float(i['amount'])
+    category_11_show = mongo_filter('Business Services').limit(4)
+
+    category_12 = mongo_filter('Investment')
+    category_12_amount = 0
+    for i in category_12:
+        category_12_amount += float(i['amount'])
+    category_12_show = mongo_filter('Investment').limit(4)
+
+    category_13 = mongo_filter('Travel')
+    category_13_amount = 0
+    for i in category_13:
+        category_13_amount += float(i['amount'])
+    category_13_show = mongo_filter('Travel').limit(4)
+
+    category_14 = mongo_filter('Kids & Elderly')
+    category_14_amount = 0
+    for i in category_14:
+        category_14_amount += float(i['amount'])
+    category_14_show = mongo_filter('Kids & Elderly').limit(4)
+
+    category_15 = mongo_filter('Taxes')
+    category_15_amount = 0
+    for i in category_15:
+        category_15_amount += float(i['amount'])
+    category_15_show = mongo_filter('Taxes').limit(4)
+
+    category_16 = mongo_filter('Others')
+    category_16_amount = 0
+    for i in category_16:
+        category_16_amount += float(i['amount'])
+    category_16_show = mongo_filter('Others').limit(4)
+
+    category_amount_show_list = [(category_01_amount, category_01_show), (category_02_amount, category_02_show),
+                                 (category_03_amount, category_03_show), (category_04_amount, category_04_show),
+                                 (category_05_amount, category_05_show), (category_06_amount, category_06_show),
+                                 (category_07_amount, category_07_show), (category_08_amount, category_08_show),
+                                 (category_09_amount, category_09_show), (category_10_amount, category_10_show),
+                                 (category_11_amount, category_11_show), (category_12_amount, category_12_show),
+                                 (category_13_amount, category_13_show), (category_14_amount, category_14_show),
+                                 (category_15_amount, category_15_show), (category_16_amount, category_16_show)]
+    sorted_by_amount = sorted(category_amount_show_list, key=lambda tup: tup[0], reverse=True)
+
+    return render_template('test.html', title='History', form=form, sorted_by_amount=sorted_by_amount)
