@@ -142,24 +142,34 @@ def account():
     connection = mongo.db.users
     user = connection.find_one({'user_name': current_user.username})
     profile_image = url_for('static', filename='profile_img/default.jpg')
+    connection2 = mongo.db.records
+    currency = connection2.find_one({'user_name': current_user.username})['currency']
+
     if request.method == 'GET':
         form.first_name.data = user['first_name']
         form.last_name.data = user['last_name']
         form.email.data = user['email']
+        form.currency.date = currency
     elif form.validate_on_submit():
+        print(form.currency.data)
+        print(user['user_name'])
         if form.profile_image_name.data:
             image_file_name = save_image(form.profile_image_name.data)
             connection.update({'_id': ObjectId(user['_id'])}, {'$set':
                 {
                     'profile_image_name': image_file_name  # profile_image
-                }})
-            # flash('The Profile Image Has Been Updated!', 'success')
-            # return redirect(url_for('account'))
+                }
+            })
         connection.update({'_id': ObjectId(user['_id'])}, {'$set':
             {
-                'first_name': form.first_name.data,  # request.form.get('first_name')
-                'last_name': form.last_name.data,  # request.form.get('last_name')
-                'email': form.email.data  # request.form.get('email')
+                'first_name': form.first_name.data,
+                'last_name': form.last_name.data,
+                'email': form.email.data
+            }
+        })
+        connection2.update_many({'user_name': user['user_name']}, {'$set':
+            {
+                'currency': form.currency.data
             }
         })
         flash('The Account Has Been Updated!', 'success')
@@ -176,6 +186,115 @@ def history():
     records = connection.find({'user_name': current_user.username}).sort(
         [("date", pymongo.DESCENDING), ("time", pymongo.DESCENDING)])
     return render_template('history.html', title='History', records=records, form=form)
+
+# Display records and sorted by categories
+# ---------->
+
+
+def mongo_filter(category):
+    form = EditForm()
+    connection = mongo.db.records
+    # Descending
+    records = connection.find({'user_name': current_user.username, 'category': category}).sort(
+        [("date", pymongo.DESCENDING), ("time", pymongo.DESCENDING)])
+    return render_template('record_filter.html', title=category, records=records, form=form)
+
+
+@app.route('/record/Food', methods=['GET', 'POST'])
+@login_required
+def food_dining():
+    return mongo_filter('Food & Dining')
+
+
+@app.route('/record/Bill', methods=['GET', 'POST'])
+@login_required
+def bill():
+    return mongo_filter('Bills & Utilities')
+
+
+@app.route('/record/Shop', methods=['GET', 'POST'])
+@login_required
+def shopping():
+    return mongo_filter('Shopping')
+
+
+@app.route('/record/Ente', methods=['GET', 'POST'])
+@login_required
+def entertainment():
+    return mongo_filter('Entertainment')
+
+
+@app.route('/record/Pers', methods=['GET', 'POST'])
+@login_required
+def personal_care():
+    return mongo_filter('Personal Care')
+
+
+@app.route('/record/Heal', methods=['GET', 'POST'])
+@login_required
+def health():
+    return mongo_filter('Health & Fitness')
+
+
+@app.route('/record/Tran', methods=['GET', 'POST'])
+@login_required
+def transport():
+    return mongo_filter('Transport & Auto')
+
+
+@app.route('/record/Fees', methods=['GET', 'POST'])
+@login_required
+def fees():
+    return mongo_filter('Fees & Charges')
+
+
+@app.route('/record/Educ', methods=['GET', 'POST'])
+@login_required
+def education():
+    return mongo_filter('Education')
+
+
+@app.route('/record/Gift', methods=['GET', 'POST'])
+@login_required
+def gift():
+    return mongo_filter('Gifts & Donation')
+
+
+@app.route('/record/Busi', methods=['GET', 'POST'])
+@login_required
+def business():
+    return mongo_filter('Business Services')
+
+
+@app.route('/record/Inve', methods=['GET', 'POST'])
+@login_required
+def investment():
+    return mongo_filter('Investment')
+
+
+@app.route('/record/Trav', methods=['GET', 'POST'])
+@login_required
+def travel():
+    return mongo_filter('Travel')
+
+
+@app.route('/record/Kids', methods=['GET', 'POST'])
+@login_required
+def kids_elderly():
+    return mongo_filter('Kids & Elderly')
+
+
+@app.route('/record/Taxe', methods=['GET', 'POST'])
+@login_required
+def taxes():
+    return mongo_filter('Taxes')
+
+
+@app.route('/record/Othe', methods=['GET', 'POST'])
+@login_required
+def others():
+    return mongo_filter('Others')
+# ---------->
 
 
 @app.route('/edit/<record_id>', methods=['GET', 'POST'])
@@ -200,11 +319,11 @@ def edit(record_id):
             }
         })
         flash('The Record Has Been Updated!', 'success')
-        return redirect(url_for('history'))
+        return redirect(url_for('record'))
     elif delete_form.submit_delete.data and delete_form.is_submitted():
         connection.delete_one({'_id': ObjectId(record_id)})
         flash('The Record Has Been Deleted!', 'success')
-        return redirect(url_for('history'))
+        return redirect(url_for('record'))
     return render_template('edit.html', title='Edit', form=form, record=record, delete_form=delete_form)
 
 
@@ -214,11 +333,13 @@ def summary():
     return render_template('summary.html', title='Summary')
 
 
-@app.route('/test', methods=['GET', 'POST'])
+@app.route('/record', methods=['GET', 'POST'])
 @login_required
-def test():
+def record():
     form = EditForm()
     connection = mongo.db.records
+    connection2 = mongo.db.records
+    currency = connection2.find_one({'user_name': current_user.username})['currency']
 
     # Descending
     # records = connection.find({'user_name': current_user.username}).sort(
@@ -335,4 +456,5 @@ def test():
                                  (category_15_amount, category_15_show), (category_16_amount, category_16_show)]
     sorted_by_amount = sorted(category_amount_show_list, key=lambda tup: tup[0], reverse=True)
 
-    return render_template('test.html', title='History', form=form, sorted_by_amount=sorted_by_amount)
+    return render_template('record.html', title='History', form=form, sorted_by_amount=sorted_by_amount,
+                           currency=currency)

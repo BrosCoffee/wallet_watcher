@@ -51,6 +51,11 @@ class UpdateAccountForm(FlaskForm):
                             validators=[InputRequired(), Length(min=2, max=20)])
     email = StringField('Email',
                         validators=[InputRequired(), Email()])
+    currencies = [('USD $', 'USD $'), ('NTD $', 'NTD $'), ('JPY ¥', 'JPY ¥'), ('EUR €', 'EUR €')]
+
+    currency = SelectField('Currency',
+                           choices=currencies,
+                           validators=[InputRequired()])
 
     submit = SubmitField('Confirm')
 
