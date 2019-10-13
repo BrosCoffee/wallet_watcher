@@ -1,52 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="card text-center">
-  <div class="card-header">
-	<ul class="nav nav-tabs card-header-tabs">
-	  <li class="nav-item">
-		<a class="nav-link" href="#">3-Day</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link" href="#">Week</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link" href="#">Month</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link" href="#">Year</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link active" href="#">All</a>
-	  </li>
-	</ul>
-  </div>
-    <div class="container">
-        <div class="row justify-content-center">
-            {% for i in sorted_by_amount %}
-                {% if i[0] != 0 %}
-                    <div class="card mr-2 mt-2" style="width: 19rem; background-color: #eef;">
-                        <div class="card-header" style="text-align: center">
-                            <h4 class="card-title mt-1 ml-2">{{ i[1][0]['category'] }}</h4>
-                            <a href="{{ url_for('record') +'/'+ i[1][0]['category'][:4] }}">
-                                <p class="card-subtitle mt-1 text-muted" style="font-size:8px; text-align: right">Edit</p>
-                            </a>
-                        </div>
-                            {% for record in i[1] %}
-                            <div class="row">
-                                <div class="col-6 pl-4 pr-0" style="text-align:left;">
-                                    {{ record['date'] }} {{ record['time'] }}
-                                </div>
-                                <div class="col-6 pl-4 pr-0" style="text-align:left;">
-                                    {{ record['currency'] }}{{ record['amount'] }}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        <div class="mb-2" style="border-bottom: 1px solid #ccc;">⋮</div>
-                        <div class="mb-2">Total: {{ currency }}{{ i[0] }}</div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" role="tab" aria-controls="home" aria-selected="true">Today</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="week-tab" data-toggle="tab" href="#week" role="tab" aria-controls="profile" aria-selected="false">Week</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="month-tab" data-toggle="tab" href="#month" role="tab" aria-controls="contact" aria-selected="false">Month</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="contact" aria-selected="false">All</a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="home-tab">Today</div>
+    <div class="tab-pane fade" id="week" role="tabpanel" aria-labelledby="profile-tab">Week</div>
+    <div class="tab-pane fade" id="month" role="tabpanel" aria-labelledby="contact-tab">Month</div>
+    <div class="tab-pane fade" id="all" role="tabpanel" aria-labelledby="contact-tab">{% include 'record_all.html' %}</div>
 </div>
+
 {% endblock content %}

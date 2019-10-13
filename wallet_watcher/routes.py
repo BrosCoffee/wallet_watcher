@@ -5,6 +5,7 @@ from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterF
     UpdateAccountForm
 from wallet_watcher import app, mongo, bcrypt, login_manager
 import time
+from datetime import date, timedelta
 import pymongo
 from flask_login import UserMixin, current_user, login_user, logout_user, login_required
 from bson.objectid import ObjectId
@@ -151,8 +152,8 @@ def account():
         form.email.data = user['email']
         form.currency.date = currency
     elif form.validate_on_submit():
-        print(form.currency.data)
-        print(user['user_name'])
+        # print(form.currency.data)
+        # print(user['user_name'])
         if form.profile_image_name.data:
             image_file_name = save_image(form.profile_image_name.data)
             connection.update({'_id': ObjectId(user['_id'])}, {'$set':
@@ -344,107 +345,146 @@ def record():
     # Descending
     # records = connection.find({'user_name': current_user.username}).sort(
     #     [('date', pymongo.DESCENDING), ('time', pymongo.DESCENDING)])
+    today = str(date.today())
+    week_ago = str(date.today() - timedelta(7))
+    month_ago = str(date.today() - timedelta(30))
 
-    def mongo_filter(category):
+
+    def mongo_filter_all(category):
         return connection.find({'user_name': current_user.username, 'category': category}).sort(
             [('date', pymongo.DESCENDING), ('time', pymongo.DESCENDING)])
 
+    def mongo_filter_today(category):
+        return connection.find({'user_name': current_user.username, 'category': category, 'date': today}).sort(
+            [('date', pymongo.DESCENDING), ('time', pymongo.DESCENDING)])
+
+    def mongo_filter_week(category):
+        return connection.find({'user_name': current_user.username, 'category': category,
+                                'date': {'$gt': week_ago}}).sort([('date', pymongo.DESCENDING),
+                                                                      ('time', pymongo.DESCENDING)])
+    def mongo_filter_month(category):
+        return connection.find({'user_name': current_user.username, 'category': category,
+                                'date': {'$gt': month_ago}}).sort([('date', pymongo.DESCENDING),
+                                                                      ('time', pymongo.DESCENDING)])
+
     # Creating variables dynamically is an anti-pattern and should be avoided.
-    category_01 = mongo_filter('Food & Dining')
+    # ---------->
+    category_01 = mongo_filter_all('Food & Dining')
     category_01_amount = 0
     for i in category_01:
         category_01_amount += float(i['amount'])
-    category_01_show = mongo_filter('Food & Dining').limit(4)
+    category_01_show = mongo_filter_all('Food & Dining').limit(4)
 
-    category_02 = mongo_filter('Bills & Utilities')
+    category_01_today = mongo_filter_today('Food & Dining')
+    category_01_amount_today = 0
+    for i in category_01_today:
+        category_01_amount_today += float(i['amount'])
+    category_01_show_today = mongo_filter_today('Food & Dining').limit(4)
+
+    category_01_week = mongo_filter_week('Food & Dining')
+    category_01_amount_week = 0
+    for i in category_01_week:
+        category_01_amount_week += float(i['amount'])
+    category_01_show_week = mongo_filter_week('Food & Dining').limit(4)
+
+    category_01_month = mongo_filter_month('Food & Dining')
+    category_01_amount_month = 0
+    for i in category_01_month:
+        category_01_amount_month += float(i['amount'])
+    category_01_show_month = mongo_filter_month('Food & Dining').limit(4)
+    # ---------->
+
+
+
+    category_02 = mongo_filter_all('Bills & Utilities')
     category_02_amount = 0
     for i in category_02:
         category_02_amount += float(i['amount'])
-    category_02_show = mongo_filter('Bills & Utilities').limit(4)
+    category_02_show = mongo_filter_all('Bills & Utilities').limit(4)
 
-    category_03 = mongo_filter('Shopping')
+    category_03 = mongo_filter_all('Shopping')
     category_03_amount = 0
     for i in category_03:
         category_03_amount += float(i['amount'])
-    category_03_show = mongo_filter('Shopping').limit(4)
+    category_03_show = mongo_filter_all('Shopping').limit(4)
 
-    category_04 = mongo_filter('Entertainment')
+    category_04 = mongo_filter_all('Entertainment')
     category_04_amount = 0
     for i in category_04:
         category_04_amount += float(i['amount'])
-    category_04_show = mongo_filter('Entertainment').limit(4)
+    category_04_show = mongo_filter_all('Entertainment').limit(4)
 
-    category_05 = mongo_filter('Personal Care')
+    category_05 = mongo_filter_all('Personal Care')
     category_05_amount = 0
     for i in category_05:
         category_05_amount += float(i['amount'])
-    category_05_show = mongo_filter('Personal Care').limit(4)
+    category_05_show = mongo_filter_all('Personal Care').limit(4)
 
-    category_06 = mongo_filter('Health & Fitness')
+    category_06 = mongo_filter_all('Health & Fitness')
     category_06_amount = 0
     for i in category_06:
         category_06_amount += float(i['amount'])
-    category_06_show = mongo_filter('Health & Fitness').limit(4)
+    category_06_show = mongo_filter_all('Health & Fitness').limit(4)
 
-    category_07 = mongo_filter('Transport & Auto')
+    category_07 = mongo_filter_all('Transport & Auto')
     category_07_amount = 0
     for i in category_07:
         category_07_amount += float(i['amount'])
-    category_07_show = mongo_filter('Transport & Auto').limit(4)
+    category_07_show = mongo_filter_all('Transport & Auto').limit(4)
 
-    category_08 = mongo_filter('Fees & Charges')
+    category_08 = mongo_filter_all('Fees & Charges')
     category_08_amount = 0
     for i in category_08:
         category_08_amount += float(i['amount'])
-    category_08_show = mongo_filter('Fees & Charges').limit(4)
+    category_08_show = mongo_filter_all('Fees & Charges').limit(4)
 
-    category_09 = mongo_filter('Education')
+    category_09 = mongo_filter_all('Education')
     category_09_amount = 0
     for i in category_09:
         category_09_amount += float(i['amount'])
-    category_09_show = mongo_filter('Education').limit(4)
+    category_09_show = mongo_filter_all('Education').limit(4)
 
-    category_10 = mongo_filter('Gifts & Donation')
+    category_10 = mongo_filter_all('Gifts & Donation')
     category_10_amount = 0
     for i in category_10:
         category_10_amount += float(i['amount'])
-    category_10_show = mongo_filter('Gifts & Donation').limit(4)
+    category_10_show = mongo_filter_all('Gifts & Donation').limit(4)
 
-    category_11 = mongo_filter('Business Services')
+    category_11 = mongo_filter_all('Business Services')
     category_11_amount = 0
     for i in category_11:
         category_11_amount += float(i['amount'])
-    category_11_show = mongo_filter('Business Services').limit(4)
+    category_11_show = mongo_filter_all('Business Services').limit(4)
 
-    category_12 = mongo_filter('Investment')
+    category_12 = mongo_filter_all('Investment')
     category_12_amount = 0
     for i in category_12:
         category_12_amount += float(i['amount'])
-    category_12_show = mongo_filter('Investment').limit(4)
+    category_12_show = mongo_filter_all('Investment').limit(4)
 
-    category_13 = mongo_filter('Travel')
+    category_13 = mongo_filter_all('Travel')
     category_13_amount = 0
     for i in category_13:
         category_13_amount += float(i['amount'])
-    category_13_show = mongo_filter('Travel').limit(4)
+    category_13_show = mongo_filter_all('Travel').limit(4)
 
-    category_14 = mongo_filter('Kids & Elderly')
+    category_14 = mongo_filter_all('Kids & Elderly')
     category_14_amount = 0
     for i in category_14:
         category_14_amount += float(i['amount'])
-    category_14_show = mongo_filter('Kids & Elderly').limit(4)
+    category_14_show = mongo_filter_all('Kids & Elderly').limit(4)
 
-    category_15 = mongo_filter('Taxes')
+    category_15 = mongo_filter_all('Taxes')
     category_15_amount = 0
     for i in category_15:
         category_15_amount += float(i['amount'])
-    category_15_show = mongo_filter('Taxes').limit(4)
+    category_15_show = mongo_filter_all('Taxes').limit(4)
 
-    category_16 = mongo_filter('Others')
+    category_16 = mongo_filter_all('Others')
     category_16_amount = 0
     for i in category_16:
         category_16_amount += float(i['amount'])
-    category_16_show = mongo_filter('Others').limit(4)
+    category_16_show = mongo_filter_all('Others').limit(4)
 
     category_amount_show_list = [(category_01_amount, category_01_show), (category_02_amount, category_02_show),
                                  (category_03_amount, category_03_show), (category_04_amount, category_04_show),
@@ -454,7 +494,7 @@ def record():
                                  (category_11_amount, category_11_show), (category_12_amount, category_12_show),
                                  (category_13_amount, category_13_show), (category_14_amount, category_14_show),
                                  (category_15_amount, category_15_show), (category_16_amount, category_16_show)]
-    sorted_by_amount = sorted(category_amount_show_list, key=lambda tup: tup[0], reverse=True)
+    sorted_by_amount_all = sorted(category_amount_show_list, key=lambda tup: tup[0], reverse=True)
 
-    return render_template('record.html', title='History', form=form, sorted_by_amount=sorted_by_amount,
+    return render_template('record.html', title='History', form=form, sorted_by_amount_all=sorted_by_amount_all,
                            currency=currency)
