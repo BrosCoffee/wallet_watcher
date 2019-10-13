@@ -15,9 +15,9 @@
     </li>
 </ul>
 <div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="home-tab">Today</div>
-    <div class="tab-pane fade" id="week" role="tabpanel" aria-labelledby="profile-tab">Week</div>
-    <div class="tab-pane fade" id="month" role="tabpanel" aria-labelledby="contact-tab">Month</div>
+    <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="home-tab">{% include 'record_today.html' %}</div>
+    <div class="tab-pane fade" id="week" role="tabpanel" aria-labelledby="profile-tab">{% include 'record_week.html' %}</div>
+    <div class="tab-pane fade" id="month" role="tabpanel" aria-labelledby="contact-tab">{% include 'record_month.html' %}</div>
     <div class="tab-pane fade" id="all" role="tabpanel" aria-labelledby="contact-tab">{% include 'record_all.html' %}</div>
 </div>
 

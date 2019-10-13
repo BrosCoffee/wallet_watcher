@@ -189,7 +189,6 @@ def history():
     return render_template('history.html', title='History', records=records, form=form)
 
 # Display records and sorted by categories
-# ---------->
 
 
 def mongo_filter(category):
@@ -295,7 +294,6 @@ def taxes():
 @login_required
 def others():
     return mongo_filter('Others')
-# ---------->
 
 
 @app.route('/edit/<record_id>', methods=['GET', 'POST'])
@@ -368,7 +366,6 @@ def record():
                                                                       ('time', pymongo.DESCENDING)])
 
     # Creating variables dynamically is an anti-pattern and should be avoided.
-    # ---------->
     category_01 = mongo_filter_all('Food & Dining')
     category_01_amount = 0
     for i in category_01:
@@ -392,9 +389,6 @@ def record():
     for i in category_01_month:
         category_01_amount_month += float(i['amount'])
     category_01_show_month = mongo_filter_month('Food & Dining').limit(4)
-    # ---------->
-
-
 
     category_02 = mongo_filter_all('Bills & Utilities')
     category_02_amount = 0
@@ -402,11 +396,47 @@ def record():
         category_02_amount += float(i['amount'])
     category_02_show = mongo_filter_all('Bills & Utilities').limit(4)
 
+    category_02_today = mongo_filter_today('Bills & Utilities')
+    category_02_amount_today = 0
+    for i in category_02_today:
+        category_02_amount_today += float(i['amount'])
+    category_02_show_today = mongo_filter_today('Bills & Utilities').limit(4)
+
+    category_02_week = mongo_filter_week('Bills & Utilities')
+    category_02_amount_week = 0
+    for i in category_02_week:
+        category_02_amount_week += float(i['amount'])
+    category_02_show_week = mongo_filter_week('Bills & Utilities').limit(4)
+
+    category_02_month = mongo_filter_month('Bills & Utilities')
+    category_02_amount_month = 0
+    for i in category_02_month:
+        category_02_amount_month += float(i['amount'])
+    category_02_show_month = mongo_filter_month('Bills & Utilities').limit(4)
+
     category_03 = mongo_filter_all('Shopping')
     category_03_amount = 0
     for i in category_03:
         category_03_amount += float(i['amount'])
     category_03_show = mongo_filter_all('Shopping').limit(4)
+
+    category_03_today = mongo_filter_today('Shopping')
+    category_03_amount_today = 0
+    for i in category_03_today:
+        category_03_amount_today += float(i['amount'])
+    category_03_show_today = mongo_filter_today('Shopping').limit(4)
+
+    category_03_week = mongo_filter_week('Shopping')
+    category_03_amount_week = 0
+    for i in category_03_week:
+        category_03_amount_week += float(i['amount'])
+    category_03_show_week = mongo_filter_week('Shopping').limit(4)
+
+    category_03_month = mongo_filter_month('Shopping')
+    category_03_amount_month = 0
+    for i in category_03_month:
+        category_03_amount_month += float(i['amount'])
+    category_03_show_month = mongo_filter_month('Shopping').limit(4)
 
     category_04 = mongo_filter_all('Entertainment')
     category_04_amount = 0
@@ -414,11 +444,47 @@ def record():
         category_04_amount += float(i['amount'])
     category_04_show = mongo_filter_all('Entertainment').limit(4)
 
+    category_04_today = mongo_filter_today('Entertainment')
+    category_04_amount_today = 0
+    for i in category_04_today:
+        category_04_amount_today += float(i['amount'])
+    category_04_show_today = mongo_filter_today('Entertainment').limit(4)
+
+    category_04_week = mongo_filter_week('Entertainment')
+    category_04_amount_week = 0
+    for i in category_04_week:
+        category_04_amount_week += float(i['amount'])
+    category_04_show_week = mongo_filter_week('Entertainment').limit(4)
+
+    category_04_month = mongo_filter_month('Entertainment')
+    category_04_amount_month = 0
+    for i in category_04_month:
+        category_04_amount_month += float(i['amount'])
+    category_04_show_month = mongo_filter_month('Entertainment').limit(4)
+
     category_05 = mongo_filter_all('Personal Care')
     category_05_amount = 0
     for i in category_05:
         category_05_amount += float(i['amount'])
     category_05_show = mongo_filter_all('Personal Care').limit(4)
+
+    category_05_today = mongo_filter_today('Personal Care')
+    category_05_amount_today = 0
+    for i in category_05_today:
+        category_05_amount_today += float(i['amount'])
+    category_05_show_today = mongo_filter_today('Personal Care').limit(4)
+
+    category_05_week = mongo_filter_week('Personal Care')
+    category_05_amount_week = 0
+    for i in category_05_week:
+        category_05_amount_week += float(i['amount'])
+    category_05_show_week = mongo_filter_week('Personal Care').limit(4)
+
+    category_05_month = mongo_filter_month('Personal Care')
+    category_05_amount_month = 0
+    for i in category_05_month:
+        category_05_amount_month += float(i['amount'])
+    category_05_show_month = mongo_filter_month('Personal Care').limit(4)
 
     category_06 = mongo_filter_all('Health & Fitness')
     category_06_amount = 0
@@ -426,11 +492,47 @@ def record():
         category_06_amount += float(i['amount'])
     category_06_show = mongo_filter_all('Health & Fitness').limit(4)
 
+    category_06_today = mongo_filter_today('Health & Fitness')
+    category_06_amount_today = 0
+    for i in category_06_today:
+        category_06_amount_today += float(i['amount'])
+    category_06_show_today = mongo_filter_today('Health & Fitness').limit(4)
+
+    category_06_week = mongo_filter_week('Health & Fitness')
+    category_06_amount_week = 0
+    for i in category_06_week:
+        category_06_amount_week += float(i['amount'])
+    category_06_show_week = mongo_filter_week('Health & Fitness').limit(4)
+
+    category_06_month = mongo_filter_month('Health & Fitness')
+    category_06_amount_month = 0
+    for i in category_06_month:
+        category_06_amount_month += float(i['amount'])
+    category_06_show_month = mongo_filter_month('Health & Fitness').limit(4)
+
     category_07 = mongo_filter_all('Transport & Auto')
     category_07_amount = 0
     for i in category_07:
         category_07_amount += float(i['amount'])
     category_07_show = mongo_filter_all('Transport & Auto').limit(4)
+
+    category_07_today = mongo_filter_today('Transport & Auto')
+    category_07_amount_today = 0
+    for i in category_07_today:
+        category_07_amount_today += float(i['amount'])
+    category_07_show_today = mongo_filter_today('Transport & Auto').limit(4)
+
+    category_07_week = mongo_filter_week('Transport & Auto')
+    category_07_amount_week = 0
+    for i in category_07_week:
+        category_07_amount_week += float(i['amount'])
+    category_07_show_week = mongo_filter_week('Transport & Auto').limit(4)
+
+    category_07_month = mongo_filter_month('Transport & Auto')
+    category_07_amount_month = 0
+    for i in category_07_month:
+        category_07_amount_month += float(i['amount'])
+    category_07_show_month = mongo_filter_month('Transport & Auto').limit(4)
 
     category_08 = mongo_filter_all('Fees & Charges')
     category_08_amount = 0
@@ -438,11 +540,47 @@ def record():
         category_08_amount += float(i['amount'])
     category_08_show = mongo_filter_all('Fees & Charges').limit(4)
 
+    category_08_today = mongo_filter_today('Fees & Charges')
+    category_08_amount_today = 0
+    for i in category_08_today:
+        category_08_amount_today += float(i['amount'])
+    category_08_show_today = mongo_filter_today('Fees & Charges').limit(4)
+
+    category_08_week = mongo_filter_week('Fees & Charges')
+    category_08_amount_week = 0
+    for i in category_08_week:
+        category_08_amount_week += float(i['amount'])
+    category_08_show_week = mongo_filter_week('Fees & Charges').limit(4)
+
+    category_08_month = mongo_filter_month('Fees & Charges')
+    category_08_amount_month = 0
+    for i in category_08_month:
+        category_08_amount_month += float(i['amount'])
+    category_08_show_month = mongo_filter_month('Fees & Charges').limit(4)
+
     category_09 = mongo_filter_all('Education')
     category_09_amount = 0
     for i in category_09:
         category_09_amount += float(i['amount'])
     category_09_show = mongo_filter_all('Education').limit(4)
+
+    category_09_today = mongo_filter_today('Education')
+    category_09_amount_today = 0
+    for i in category_09_today:
+        category_09_amount_today += float(i['amount'])
+    category_09_show_today = mongo_filter_today('Education').limit(4)
+
+    category_09_week = mongo_filter_week('Education')
+    category_09_amount_week = 0
+    for i in category_09_week:
+        category_09_amount_week += float(i['amount'])
+    category_09_show_week = mongo_filter_week('Education').limit(4)
+
+    category_09_month = mongo_filter_month('Education')
+    category_09_amount_month = 0
+    for i in category_09_month:
+        category_09_amount_month += float(i['amount'])
+    category_09_show_month = mongo_filter_month('Education').limit(4)
 
     category_10 = mongo_filter_all('Gifts & Donation')
     category_10_amount = 0
@@ -450,11 +588,47 @@ def record():
         category_10_amount += float(i['amount'])
     category_10_show = mongo_filter_all('Gifts & Donation').limit(4)
 
+    category_10_today = mongo_filter_today('Gifts & Donation')
+    category_10_amount_today = 0
+    for i in category_10_today:
+        category_10_amount_today += float(i['amount'])
+    category_10_show_today = mongo_filter_today('Gifts & Donation').limit(4)
+
+    category_10_week = mongo_filter_week('Gifts & Donation')
+    category_10_amount_week = 0
+    for i in category_10_week:
+        category_10_amount_week += float(i['amount'])
+    category_10_show_week = mongo_filter_week('Gifts & Donation').limit(4)
+
+    category_10_month = mongo_filter_month('Gifts & Donation')
+    category_10_amount_month = 0
+    for i in category_10_month:
+        category_10_amount_month += float(i['amount'])
+    category_10_show_month = mongo_filter_month('Gifts & Donation').limit(4)
+
     category_11 = mongo_filter_all('Business Services')
     category_11_amount = 0
     for i in category_11:
         category_11_amount += float(i['amount'])
     category_11_show = mongo_filter_all('Business Services').limit(4)
+
+    category_11_today = mongo_filter_today('Business Services')
+    category_11_amount_today = 0
+    for i in category_11_today:
+        category_11_amount_today += float(i['amount'])
+    category_11_show_today = mongo_filter_today('Business Services').limit(4)
+
+    category_11_week = mongo_filter_week('Business Services')
+    category_11_amount_week = 0
+    for i in category_11_week:
+        category_11_amount_week += float(i['amount'])
+    category_11_show_week = mongo_filter_week('Business Services').limit(4)
+
+    category_11_month = mongo_filter_month('Business Services')
+    category_11_amount_month = 0
+    for i in category_11_month:
+        category_11_amount_month += float(i['amount'])
+    category_11_show_month = mongo_filter_month('Business Services').limit(4)
 
     category_12 = mongo_filter_all('Investment')
     category_12_amount = 0
@@ -462,11 +636,47 @@ def record():
         category_12_amount += float(i['amount'])
     category_12_show = mongo_filter_all('Investment').limit(4)
 
+    category_12_today = mongo_filter_today('Investment')
+    category_12_amount_today = 0
+    for i in category_12_today:
+        category_12_amount_today += float(i['amount'])
+    category_12_show_today = mongo_filter_today('Investment').limit(4)
+
+    category_12_week = mongo_filter_week('Investment')
+    category_12_amount_week = 0
+    for i in category_12_week:
+        category_12_amount_week += float(i['amount'])
+    category_12_show_week = mongo_filter_week('Investment').limit(4)
+
+    category_12_month = mongo_filter_month('Investment')
+    category_12_amount_month = 0
+    for i in category_12_month:
+        category_12_amount_month += float(i['amount'])
+    category_12_show_month = mongo_filter_month('Investment').limit(4)
+
     category_13 = mongo_filter_all('Travel')
     category_13_amount = 0
     for i in category_13:
         category_13_amount += float(i['amount'])
     category_13_show = mongo_filter_all('Travel').limit(4)
+
+    category_13_today = mongo_filter_today('Travel')
+    category_13_amount_today = 0
+    for i in category_13_today:
+        category_13_amount_today += float(i['amount'])
+    category_13_show_today = mongo_filter_today('Travel').limit(4)
+
+    category_13_week = mongo_filter_week('Travel')
+    category_13_amount_week = 0
+    for i in category_13_week:
+        category_13_amount_week += float(i['amount'])
+    category_13_show_week = mongo_filter_week('Travel').limit(4)
+
+    category_13_month = mongo_filter_month('Travel')
+    category_13_amount_month = 0
+    for i in category_13_month:
+        category_13_amount_month += float(i['amount'])
+    category_13_show_month = mongo_filter_month('Travel').limit(4)
 
     category_14 = mongo_filter_all('Kids & Elderly')
     category_14_amount = 0
@@ -474,17 +684,71 @@ def record():
         category_14_amount += float(i['amount'])
     category_14_show = mongo_filter_all('Kids & Elderly').limit(4)
 
+    category_14_today = mongo_filter_today('Kids & Elderly')
+    category_14_amount_today = 0
+    for i in category_14_today:
+        category_14_amount_today += float(i['amount'])
+    category_14_show_today = mongo_filter_today('Kids & Elderly').limit(4)
+
+    category_14_week = mongo_filter_week('Kids & Elderly')
+    category_14_amount_week = 0
+    for i in category_14_week:
+        category_14_amount_week += float(i['amount'])
+    category_14_show_week = mongo_filter_week('Kids & Elderly').limit(4)
+
+    category_14_month = mongo_filter_month('Kids & Elderly')
+    category_14_amount_month = 0
+    for i in category_14_month:
+        category_14_amount_month += float(i['amount'])
+    category_14_show_month = mongo_filter_month('Kids & Elderly').limit(4)
+
     category_15 = mongo_filter_all('Taxes')
     category_15_amount = 0
     for i in category_15:
         category_15_amount += float(i['amount'])
     category_15_show = mongo_filter_all('Taxes').limit(4)
 
+    category_15_today = mongo_filter_today('Taxes')
+    category_15_amount_today = 0
+    for i in category_15_today:
+        category_15_amount_today += float(i['amount'])
+    category_15_show_today = mongo_filter_today('Taxes').limit(4)
+
+    category_15_week = mongo_filter_week('Taxes')
+    category_15_amount_week = 0
+    for i in category_15_week:
+        category_15_amount_week += float(i['amount'])
+    category_15_show_week = mongo_filter_week('Taxes').limit(4)
+
+    category_15_month = mongo_filter_month('Taxes')
+    category_15_amount_month = 0
+    for i in category_15_month:
+        category_15_amount_month += float(i['amount'])
+    category_15_show_month = mongo_filter_month('Taxes').limit(4)
+
     category_16 = mongo_filter_all('Others')
     category_16_amount = 0
     for i in category_16:
         category_16_amount += float(i['amount'])
     category_16_show = mongo_filter_all('Others').limit(4)
+
+    category_16_today = mongo_filter_today('Others')
+    category_16_amount_today = 0
+    for i in category_16_today:
+        category_16_amount_today += float(i['amount'])
+    category_16_show_today = mongo_filter_today('Others').limit(4)
+
+    category_16_week = mongo_filter_week('Others')
+    category_16_amount_week = 0
+    for i in category_16_week:
+        category_16_amount_week += float(i['amount'])
+    category_16_show_week = mongo_filter_week('Others').limit(4)
+
+    category_16_month = mongo_filter_month('Others')
+    category_16_amount_month = 0
+    for i in category_16_month:
+        category_16_amount_month += float(i['amount'])
+    category_16_show_month = mongo_filter_month('Others').limit(4)
 
     category_amount_show_list = [(category_01_amount, category_01_show), (category_02_amount, category_02_show),
                                  (category_03_amount, category_03_show), (category_04_amount, category_04_show),
@@ -494,7 +758,89 @@ def record():
                                  (category_11_amount, category_11_show), (category_12_amount, category_12_show),
                                  (category_13_amount, category_13_show), (category_14_amount, category_14_show),
                                  (category_15_amount, category_15_show), (category_16_amount, category_16_show)]
+
+    total_amount_all = 0
+    for i in category_amount_show_list:
+        (a, b) = i
+        total_amount_all += a
+    total_amount_all = round(total_amount_all, 2)
+
+    category_amount_show_today_list = [(category_01_amount_today, category_01_show_today),
+                                       (category_02_amount_today, category_02_show_today),
+                                       (category_03_amount_today, category_03_show_today),
+                                       (category_04_amount_today, category_04_show_today),
+                                       (category_05_amount_today, category_05_show_today),
+                                       (category_06_amount_today, category_06_show_today),
+                                       (category_07_amount_today, category_07_show_today),
+                                       (category_08_amount_today, category_08_show_today),
+                                       (category_09_amount_today, category_09_show_today),
+                                       (category_10_amount_today, category_10_show_today),
+                                       (category_11_amount_today, category_11_show_today),
+                                       (category_12_amount_today, category_12_show_today),
+                                       (category_13_amount_today, category_13_show_today),
+                                       (category_14_amount_today, category_14_show_today),
+                                       (category_15_amount_today, category_15_show_today),
+                                       (category_16_amount_today, category_16_show_today)]
+
+    total_amount_today = 0
+    for i in category_amount_show_today_list:
+        (a, b) = i
+        total_amount_today += a
+    total_amount_today = round(total_amount_today, 2)
+
+    category_amount_show_week_list = [(category_01_amount_week, category_01_show_week),
+                                      (category_02_amount_week, category_02_show_week),
+                                      (category_03_amount_week, category_03_show_week),
+                                      (category_04_amount_week, category_04_show_week),
+                                      (category_05_amount_week, category_05_show_week),
+                                      (category_06_amount_week, category_06_show_week),
+                                      (category_07_amount_week, category_07_show_week),
+                                      (category_08_amount_week, category_08_show_week),
+                                      (category_09_amount_week, category_09_show_week),
+                                      (category_10_amount_week, category_10_show_week),
+                                      (category_11_amount_week, category_11_show_week),
+                                      (category_12_amount_week, category_12_show_week),
+                                      (category_13_amount_week, category_13_show_week),
+                                      (category_14_amount_week, category_14_show_week),
+                                      (category_15_amount_week, category_15_show_week),
+                                      (category_16_amount_week, category_16_show_week)]
+
+    total_amount_week = 0
+    for i in category_amount_show_week_list:
+        (a, b) = i
+        total_amount_week += a
+    total_amount_week = round(total_amount_week, 2)
+
+    category_amount_show_month_list = [(category_01_amount_month, category_01_show_month),
+                                       (category_02_amount_month, category_02_show_month),
+                                       (category_03_amount_month, category_03_show_month),
+                                       (category_04_amount_month, category_04_show_month),
+                                       (category_05_amount_month, category_05_show_month),
+                                       (category_06_amount_month, category_06_show_month),
+                                       (category_07_amount_month, category_07_show_month),
+                                       (category_08_amount_month, category_08_show_month),
+                                       (category_09_amount_month, category_09_show_month),
+                                       (category_10_amount_month, category_10_show_month),
+                                       (category_11_amount_month, category_11_show_month),
+                                       (category_12_amount_month, category_12_show_month),
+                                       (category_13_amount_month, category_13_show_month),
+                                       (category_14_amount_month, category_14_show_month),
+                                       (category_15_amount_month, category_15_show_month),
+                                       (category_16_amount_month, category_16_show_month)]
+
+    total_amount_month = 0
+    for i in category_amount_show_month_list:
+        (a, b) = i
+        total_amount_month += a
+    total_amount_month = round(total_amount_month, 2)
+
     sorted_by_amount_all = sorted(category_amount_show_list, key=lambda tup: tup[0], reverse=True)
+    sorted_by_amount_today = sorted(category_amount_show_today_list, key=lambda tup: tup[0], reverse=True)
+    sorted_by_amount_week = sorted(category_amount_show_week_list, key=lambda tup: tup[0], reverse=True)
+    sorted_by_amount_month = sorted(category_amount_show_month_list, key=lambda tup: tup[0], reverse=True)
 
     return render_template('record.html', title='History', form=form, sorted_by_amount_all=sorted_by_amount_all,
-                           currency=currency)
+                           sorted_by_amount_today=sorted_by_amount_today, sorted_by_amount_week=sorted_by_amount_week,
+                           sorted_by_amount_month=sorted_by_amount_month, currency=currency,
+                           total_amount_today=total_amount_today, total_amount_week=total_amount_week,
+                           total_amount_month=total_amount_month, total_amount_all=total_amount_all)

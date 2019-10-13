@@ -1,25 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="card text-center">
-  <div class="card-header">
-	<ul class="nav nav-tabs card-header-tabs">
-	  <li class="nav-item">
-		<a class="nav-link" href="#">3-Day</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link active" href="#">Week</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link" href="#">Month</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link" href="#">Year</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link" href="#">All</a>
-	  </li>
-	</ul>
-  </div>
     <div class="container">
         <div class="row justify-content-center">
             {% for record in records %}
