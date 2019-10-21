@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card text-center border-top-0">
+  <div class="card-body">
+	<div class="row">
+		<div class="col-lg-8 col-sm-12 mx-auto">
+			<!-- Add 2 buttons -->
+			<button class="btn btn-outline-info mr-2" onclick="update(data1)">Today</button>
+			<button class="btn btn-outline-info mr-2" onclick="update(data2)">Week</button>
+			<button class="btn btn-outline-info mr-2" onclick="update(data3)">Month</button>
+			<button class="btn btn-outline-info mr-2" onclick="update(data4)">&nbsp;&nbsp;&nbsp;All&nbsp;&nbsp;&nbsp;</button>
+			<!-- Create a div where the graph will take place -->
+			<div class="mt-2">(Currency: {{ currency }})</div>
+			<div id="my_dataviz"></div>
+		</div>
+	</div>
+  </div>
+</div>
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<!-- Color scale -->
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script>
+
+// create 4 data_set
+var data1 = [
+   {% for i in sorted_by_amount_today %}{% if i[0] != 0 %} {group: '{{ i[1][0]['category'] }}' , value: {{ i[0] }}{% if not loop.last %} },{% endif %}{% endif %}{% endfor %}
+];
+
+var data2 = [
+   {% for i in sorted_by_amount_week %}{% if i[0] != 0 %} {group: '{{ i[1][0]['category'] }}' , value:{{ i[0] }}{% if not loop.last %} },{% endif %}{% endif %}{% endfor %}
+];
+
+var data3 = [
+   {% for i in sorted_by_amount_month %}{% if i[0] != 0 %} {group: '{{ i[1][0]['category'] }}' , value:{{ i[0] }}{% if not loop.last %} },{% endif %}{% endif %}{% endfor %}
+];
+
+var data4 = [
+   {% for i in sorted_by_amount_all %}{% if i[0] != 0 %} {group: '{{ i[1][0]['category'] }}' , value:{{ i[0] }} }{% if not loop.last %},{% endif %}{% endif %}{% endfor %}
+];
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 30, bottom: 80, left: 56},
+    width = 400 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+
+// Initialize the X axis
+var x = d3.scaleBand()
+  .range([ 0, width ])
+  .padding(0.2);
+var xAxis = svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+
+
+// Initialize the Y axis
+var y = d3.scaleLinear()
+  .range([ height, 0]);
+var yAxis = svg.append("g")
+  .attr("class", "myYaxis")
+
+
+// A function that create / update the plot for a given variable:
+function update(data) {
+
+  // Update the X axis
+  x.domain(data.map(function(d) { return d.group; }))
+  xAxis.call(d3.axisBottom(x))
+  	   .selectAll("text")
+       .style("text-anchor", "end")
+       .style("font-size","12px")
+       .attr("transform", "rotate(-35)");
+
+  // Update the Y axis
+  y.domain([0, d3.max(data, function(d) { return d.value }) ]);
+  yAxis.transition().duration(1000).call(d3.axisLeft(y));
+
+  // Create the u variable
+  var u = svg.selectAll("rect")
+    .data(data)
+
+  u
+    .enter()
+    .append("rect") // Add a new rect for each new elements
+    .merge(u) // get the already existing elements as well
+    .transition() // and apply changes to all of them
+    .duration(1000)
+      .attr("x", function(d) { return x(d.group); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.value); })
+      .attr("fill", "#69b3a2")
+
+  // If less group in the new dataset, I delete the ones not in use anymore
+  u
+    .exit()
+    .remove()
+}
+
+// Initialize the plot with the first dataset
+update(data1)
+
+</script>
+
+{% endblock content %}
