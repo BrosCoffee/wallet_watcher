@@ -96,13 +96,13 @@ class ContactForm(FlaskForm):
 
 
 class EnterForm(FlaskForm):
-    categories = [('Food & Dining', 'Food & Dining'), ('Bills & Utilities', 'Bills & Utilities'),
+    categories = [('Food and Dining', 'Food and Dining'), ('Bills and Utilities', 'Bills and Utilities'),
                   ('Shopping', 'Shopping'), ('Entertainment', 'Entertainment'),
-                  ('Personal Care', 'Personal Care'), ('Health & Fitness', 'Health & Fitness'),
-                  ('Transport & Auto', 'Transport & Auto'), ('Fees & Charges', 'Fees & Charges'),
-                  ('Education', 'Education'), ('Gifts & Donation', 'Gifts & Donation'),
+                  ('Personal Care', 'Personal Care'), ('Health and Fitness', 'Health and Fitness'),
+                  ('Transport and Auto', 'Transport and Auto'), ('Fees and Charges', 'Fees and Charges'),
+                  ('Education', 'Education'), ('Gifts and Donation', 'Gifts and Donation'),
                   ('Business Services', 'Business Services'), ('Investment', 'Investment'),
-                  ('Travel', 'Travel'), ('Kids & Elderly', 'Kids & Elderly'), ('Taxes', 'Taxes'),
+                  ('Travel', 'Travel'), ('Kids and Elderly', 'Kids and Elderly'), ('Taxes', 'Taxes'),
                   ('Others', 'Others')]
     category = SelectField('Expense Categories',
                            choices=categories)
@@ -121,13 +121,13 @@ class EnterForm(FlaskForm):
 
 
 class EditForm(FlaskForm):
-    categories = [('Food & Dining', 'Food & Dining'), ('Bills & Utilities', 'Bills & Utilities'),
+    categories = [('Food and Dining', 'Food and Dining'), ('Bills and Utilities', 'Bills and Utilities'),
                   ('Shopping', 'Shopping'), ('Entertainment', 'Entertainment'),
-                  ('Personal Care', 'Personal Care'), ('Health & Fitness', 'Health & Fitness'),
-                  ('Transport & Auto', 'Transport & Auto'), ('Fees & Charges', 'Fees & Charges'),
-                  ('Education', 'Education'), ('Gifts & Donation', 'Gifts & Donation'),
+                  ('Personal Care', 'Personal Care'), ('Health and Fitness', 'Health and Fitness'),
+                  ('Transport and Auto', 'Transport and Auto'), ('Fees and Charges', 'Fees and Charges'),
+                  ('Education', 'Education'), ('Gifts and Donation', 'Gifts and Donation'),
                   ('Business Services', 'Business Services'), ('Investment', 'Investment'),
-                  ('Travel', 'Travel'), ('Kids & Elderly', 'Kids & Elderly'), ('Taxes', 'Taxes'),
+                  ('Travel', 'Travel'), ('Kids and Elderly', 'Kids and Elderly'), ('Taxes', 'Taxes'),
                   ('Others', 'Others')]
     category = SelectField('Expense Categories',
                            choices=categories)

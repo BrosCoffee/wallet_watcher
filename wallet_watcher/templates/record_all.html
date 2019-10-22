@@ -9,7 +9,7 @@
                     <div class="card mr-2 mt-2" style="width: 19rem; background-color: #eef;">
                         <div class="card-header" style="text-align: center">
                             <h4 class="card-title mt-1 ml-2">{{ i[1][0]['category'] }}</h4>
-                            <a href="{{ url_for('record') +'/'+ i[1][0]['category'][:4] }}">
+                            <a href="{{ url_for('record') +'/'+ i[1][0]['category'][:4] + '?limit=4&offset=0' }}">
                                 <p class="card-subtitle mt-1 text-muted" style="font-size:8px; text-align: right">Edit</p>
                             </a>
                         </div>
