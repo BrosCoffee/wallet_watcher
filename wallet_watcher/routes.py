@@ -1,17 +1,34 @@
 import os
 import secrets
 from flask import render_template, url_for, flash, redirect, request
-from wallet_watcher.form import RegistrationForm, LoginForm, ContactForm, EnterForm, EditForm, DeleteForm, \
-    UpdateAccountForm
-from wallet_watcher import app, mongo, bcrypt, login_manager
+from wallet_watcher.form import (RegistrationForm, LoginForm, ContactForm, EnterForm, EditForm, DeleteForm,
+                                 UpdateAccountForm, RequestResetForm, ResetPasswordForm)
+from wallet_watcher import app, mongo, bcrypt, login_manager, mail
 import time
 from datetime import date, timedelta
 import pymongo
 from flask_login import UserMixin, current_user, login_user, logout_user, login_required
 from bson.objectid import ObjectId
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask_mail import Message
+
 
 client = pymongo.MongoClient(host='localhost', port=27017)
 db = client.wallet_watcher
+
+
+def get_reset_token(user_id, expires_sec=1800):
+    s = Serializer(app.config['SECRET_KEY'], expires_sec)
+    return s.dumps({'_id': user_id}).decode('utf-8')
+
+
+def verify_reset_token(token):
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        user_id = s.loads(token)
+    except:
+        return None
+    return user_id
 
 
 @app.route('/')
@@ -1364,3 +1381,49 @@ def record():
                            sorted_by_amount_month=sorted_by_amount_month, currency=currency,
                            total_amount_today=total_amount_today, total_amount_week=total_amount_week,
                            total_amount_month=total_amount_month, total_amount_all=total_amount_all)
+
+
+def send_reset_email(user, user_id):
+    token = get_reset_token(user_id)
+    msg = Message('Password Reset Request',
+                  sender='noreply@googlemail.com',
+                  recipients=[user])
+    msg.body = '''To reset your password, visit the following link:
+{}
+If you did not make this request then simply ignore this email and no changes will be made.
+'''.format(url_for('reset_token', token=token, _external=True))
+    mail.send(msg)
+
+
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('enter'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        connection = mongo.db.users
+        user = connection.find_one({'email': form.email.data})
+        user_id = str(user['_id'])
+        send_reset_email(form.email.data, user_id)
+        flash('An email has been sent with instructions to reset your password.', 'info')
+        return redirect(url_for('login'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    connection = mongo.db.users
+    if current_user.is_authenticated:
+        return redirect(url_for('enter'))
+    user = verify_reset_token(token)
+    if user is None:
+        flash('That is an invalid or expired token.', 'warning')
+        return redirect(url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
+        connection.update({'_id': ObjectId(user['_id'])}, {'$set': {'password': hashed_password}})
+        flash('Your password has been updated! You are now able to log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_token.html', title='Reset Password', form=form)
+

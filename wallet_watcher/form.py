@@ -146,3 +146,27 @@ class EditForm(FlaskForm):
 
 class DeleteForm(FlaskForm):
     submit_delete = SubmitField('Delete')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[InputRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    client = pymongo.MongoClient(host='localhost', port=27017)
+    db = client.wallet_watcher
+    collection = db.users
+
+    def validate_email(self, email):
+        result = self.collection.find_one({'email': email.data})
+        if result is None:
+            raise ValidationError('There is no account with that email. You must register first.')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password',
+                             validators=[InputRequired(), Length(min=6, max=20)])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[InputRequired(), Length(min=6, max=20),
+                                                 EqualTo('password', 'Passwords must match.')])
+    submit = SubmitField('Reset Password')
