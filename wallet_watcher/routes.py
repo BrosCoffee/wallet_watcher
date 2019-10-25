@@ -45,8 +45,21 @@ def about():
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     form = ContactForm()
-    if form.validate_on_submit():
-        pass
+    if form.is_submitted():
+        msg = Message('Wallet Watcher Contact Request from {} {}'.format(form.firstname.data, form.lastname.data),
+                      sender='noreply@googlemail.com',
+                      recipients=['raymondcyang0219@gmail.com'])
+        msg.body = '''Email: {}
+Name: {} {}
+
+Note:
+{}
+'''.format(form.email.data, form.firstname.data, form.lastname.data, form.note.data)
+        mail.send(msg)
+        flash('Your request has been sent.', 'info')
+        return redirect(url_for('home'))
+    else:
+        print('failed')
     return render_template('contact.html', title='Contact', form=form)
 
 

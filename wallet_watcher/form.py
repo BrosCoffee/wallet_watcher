@@ -90,7 +90,7 @@ class ContactForm(FlaskForm):
     email = StringField('Email',
                         validators=[InputRequired(), Email()])
     note = TextAreaField('Note',
-                         validators=[InputRequired],
+                         validators=[InputRequired()],
                          render_kw={"placeholder": "Please Leave Me A Message :)"})
     submit = SubmitField('Submit')
 
