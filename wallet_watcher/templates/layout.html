@@ -12,27 +12,26 @@
   </head>
   <body>
   	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-	  <a class="navbar-brand ml-1" href="{{ url_for('home') }}">Wallet Watcher</a>
+	  <a class="navbar-brand ml-1" href="{{ url_for('main.home') }}">Wallet Watcher</a>
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
 	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 	    <div class="navbar-nav mr-auto">
-	      <a class="nav-item nav-link ml-3" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
-	      <a class="nav-item nav-link ml-3" href="{{ url_for('about') }}">About</a>
-	      <a class="nav-item nav-link ml-3" href="{{ url_for('contact') }}">Contact</a>
+	      <a class="nav-item nav-link ml-3" href="{{ url_for('main.home') }}">Home <span class="sr-only">(current)</span></a>
+	      <a class="nav-item nav-link ml-3" href="{{ url_for('main.about') }}">About</a>
+	      <a class="nav-item nav-link ml-3" href="{{ url_for('main.contact') }}">Contact</a>
 	    </div>
 	    <div class="navbar-nav">
 			{% if current_user.is_authenticated %}
-				<a href="{{ url_for('enter') }}" class="ml-2"><button type="button" class="btn btn-outline-success mr-2">Enter</button></a>
-<!--				<a class="nav-item nav-link ml-3" href="{{ url_for('history') }}">History <span class="sr-only">(current)</span></a>-->
-				<a class="nav-item nav-link ml-3" href="{{ url_for('record') }}">Record <span class="sr-only">(current)</span></a>
-				<a class="nav-item nav-link ml-3" href="{{ url_for('chart') }}">Chart <span class="sr-only">(current)</span></a>
-				<a class="nav-item nav-link ml-3" href="{{ url_for('account') }}">Account <span class="sr-only">(current)</span></a>
-				<a class="nav-item nav-link ml-3" href="{{ url_for('logout') }}">Logout <span class="sr-only">(current)</span></a>
+				<a href="{{ url_for('records.enter') }}" class="ml-2"><button type="button" class="btn btn-outline-success mr-2">Enter</button></a>
+				<a class="nav-item nav-link ml-3" href="{{ url_for('records.record') }}">Record <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link ml-3" href="{{ url_for('records.chart') }}">Chart <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link ml-3" href="{{ url_for('users.account') }}">Account <span class="sr-only">(current)</span></a>
+				<a class="nav-item nav-link ml-3" href="{{ url_for('users.logout') }}">Logout <span class="sr-only">(current)</span></a>
 			{% else %}
-	      		<a class="nav-item nav-link" href="{{ url_for('login') }}">Login <span class="sr-only">(current)</span></a>
-	      		<a class="nav-item nav-link" href="{{ url_for('register') }}">Register <span class="sr-only">(current)</span></a>
+	      		<a class="nav-item nav-link" href="{{ url_for('users.login') }}">Login <span class="sr-only">(current)</span></a>
+	      		<a class="nav-item nav-link" href="{{ url_for('users.register') }}">Register <span class="sr-only">(current)</span></a>
 			{% endif %}
 	    </div>
 	  </div>

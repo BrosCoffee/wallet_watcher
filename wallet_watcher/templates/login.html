@@ -41,10 +41,10 @@
                 <div class="form-group">
                     {{ form.submit(class="btn btn-primary") }}
                     <small class="text-muted float-right mt-2 mr-4">
-                        Forgot Password? <a class="ml-2" href="{{ url_for('reset_request') }}">Reset Password</a>
+                        Forgot Password? <a class="ml-2" href="{{ url_for('users.reset_request') }}">Reset Password</a>
                     </small>
                     <small class="text-muted float-right mt-2 mr-4">
-                        Need An Account? <a class="ml-2" href="{{ url_for('register') }}">Register Now</a>
+                        Need An Account? <a class="ml-2" href="{{ url_for('users.register') }}">Register Now</a>
                     </small>
                 </div>
             </form>

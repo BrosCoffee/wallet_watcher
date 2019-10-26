@@ -22,4 +22,10 @@ app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
 mail = Mail(app)
 
-from wallet_watcher import routes
+from wallet_watcher.main.routes import main
+from wallet_watcher.records.routes import records
+from wallet_watcher.users.routes import users
+
+app.register_blueprint(main)
+app.register_blueprint(records)
+app.register_blueprint(users)

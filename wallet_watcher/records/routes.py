@@ -1,142 +1,15 @@
-import os
-import secrets
-from flask import render_template, url_for, flash, redirect, request
-from wallet_watcher.form import (RegistrationForm, LoginForm, ContactForm, EnterForm, EditForm, DeleteForm,
-                                 UpdateAccountForm, RequestResetForm, ResetPasswordForm)
-from wallet_watcher import app, mongo, bcrypt, login_manager, mail
+from flask import Blueprint, render_template, url_for, flash, redirect, request
+from wallet_watcher.records.forms import EnterForm, EditForm, DeleteForm
+from wallet_watcher import mongo
 import time
 from datetime import date, timedelta
 import pymongo
-from flask_login import UserMixin, current_user, login_user, logout_user, login_required
+from flask_login import current_user, login_required
 from bson.objectid import ObjectId
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask_mail import Message
+records = Blueprint('records', __name__)
 
 
-client = pymongo.MongoClient(host='localhost', port=27017)
-db = client.wallet_watcher
-
-
-def get_reset_token(user_id, expires_sec=1800):
-    s = Serializer(app.config['SECRET_KEY'], expires_sec)
-    return s.dumps({'_id': user_id}).decode('utf-8')
-
-
-def verify_reset_token(token):
-    s = Serializer(app.config['SECRET_KEY'])
-    try:
-        user_id = s.loads(token)
-    except:
-        return None
-    return user_id
-
-
-@app.route('/')
-@app.route('/home')
-def home():
-    return render_template('home.html')
-
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    form = ContactForm()
-    if form.is_submitted():
-        msg = Message('Wallet Watcher Contact Request from {} {}'.format(form.firstname.data, form.lastname.data),
-                      sender='noreply@googlemail.com',
-                      recipients=['raymondcyang0219@gmail.com'])
-        msg.body = '''Email: {}
-Name: {} {}
-
-Note:
-{}
-'''.format(form.email.data, form.firstname.data, form.lastname.data, form.note.data)
-        mail.send(msg)
-        flash('Your request has been sent.', 'info')
-        return redirect(url_for('home'))
-    else:
-        print('failed')
-    return render_template('contact.html', title='Contact', form=form)
-
-
-class User(UserMixin):
-    def __init__(self, username):
-        self.username = username
-
-    def get_id(self):
-        return self.username
-
-    @staticmethod
-    def check_password():
-        form = LoginForm()
-        collection = db.users
-        result = collection.find_one({'user_name': form.username.data})
-        try:
-            password = result['password']
-            return bcrypt.check_password_hash(password, form.password.data)
-        except:
-            return flash('The Email does not exist.', 'danger')
-
-
-@login_manager.user_loader
-def load_user(username):
-    u = mongo.db.users.find_one({"user_name": username})
-    if u is not None:
-        curr_user = User(username=u['user_name'])
-        curr_user.id = username
-        return curr_user
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('enter'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = mongo.db.users.find_one({"user_name": form.username.data})
-        if user and User.check_password():
-            user_obj = User(username=user['user_name'])
-            login_user(user_obj, remember=form.remember.data)
-            next_page = request.args.get('next')
-            flash('Welcome back, {}!'.format(user['first_name']), 'success')
-            return redirect(next_page) if next_page else redirect(url_for('enter'))
-        elif User.check_password() is False:
-            flash('The password is incorrect.', 'danger')
-    return render_template('login.html', title='Sign In', form=form)
-
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('enter'))
-    form = RegistrationForm()
-    connection = mongo.db.users
-
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
-        connection.insert({'profile_image_name': '/static/profile_img/default.jpg',
-                           'user_name': request.form.get('username'),
-                           'first_name': request.form.get('first_name'),
-                           'last_name': request.form.get('last_name'),
-                           'email': request.form.get('email'),
-                           'password': hashed_password})
-        flash('{}, your account has been created!'.format(form.first_name.data), 'success')
-        return redirect(url_for('enter'))
-    return render_template('register.html', title='Register', form=form)
-
-
-@app.route('/enter', methods=['GET', 'POST'])
+@records.route('/enter', methods=['GET', 'POST'])
 @login_required
 def enter():
     form = EnterForm()
@@ -154,63 +27,14 @@ def enter():
                                'amount': request.form.get('amount'),
                                'note': request.form.get('note')})
             flash('The New Record Has Been Added!', 'success')
-            return redirect(url_for('enter'))
+            return redirect(url_for('records.enter'))
 
     return render_template('enter_form.html', title='Enter Form', form=form)
 
 
-def save_image(form_image):
-    random_rex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_image.filename)
-    picture_fn = random_rex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_img', picture_fn)
-    form_image.save(picture_path)
-    return '/static/profile_img/' + picture_fn
 
 
-@app.route('/account', methods=['GET', 'POST'])
-@login_required
-def account():
-    form = UpdateAccountForm()
-    connection = mongo.db.users
-    user = connection.find_one({'user_name': current_user.username})
-    profile_image = url_for('static', filename='profile_img/default.jpg')
-    connection2 = mongo.db.records
-    currency = connection2.find_one({'user_name': current_user.username})['currency']
-
-    if request.method == 'GET':
-        form.first_name.data = user['first_name']
-        form.last_name.data = user['last_name']
-        form.email.data = user['email']
-        form.currency.date = currency
-    elif form.validate_on_submit():
-        # print(form.currency.data)
-        # print(user['user_name'])
-        if form.profile_image_name.data:
-            image_file_name = save_image(form.profile_image_name.data)
-            connection.update({'_id': ObjectId(user['_id'])}, {'$set':
-                {
-                    'profile_image_name': image_file_name  # profile_image
-                }
-            })
-        connection.update({'_id': ObjectId(user['_id'])}, {'$set':
-            {
-                'first_name': form.first_name.data,
-                'last_name': form.last_name.data,
-                'email': form.email.data
-            }
-        })
-        connection2.update_many({'user_name': user['user_name']}, {'$set':
-            {
-                'currency': form.currency.data
-            }
-        })
-        flash('The Account Has Been Updated!', 'success')
-        return redirect(url_for('account'))
-    return render_template('account.html', title='Account', user=user, form=form, profile_image=profile_image)
-
-
-@app.route('/history', methods=['GET', 'POST'])
+@records.route('/history', methods=['GET', 'POST'])
 @login_required
 def history():
     form = EditForm()
@@ -243,103 +67,103 @@ def mongo_filter(category):
     return render_template('record_filter.html', title=category, records=records, next_url=next_url, last_url=last_url)
 
 
-@app.route('/record/Food', methods=['GET', 'POST'])
+@records.route('/record/Food', methods=['GET', 'POST'])
 @login_required
 def food_dining():
     return mongo_filter('Food and Dining')
 
 
-@app.route('/record/Bill', methods=['GET', 'POST'])
+@records.route('/record/Bill', methods=['GET', 'POST'])
 @login_required
 def bill():
     return mongo_filter('Bills and Utilities')
 
 
-@app.route('/record/Shop', methods=['GET', 'POST'])
+@records.route('/record/Shop', methods=['GET', 'POST'])
 @login_required
 def shopping():
     return mongo_filter('Shopping')
 
 
-@app.route('/record/Ente', methods=['GET', 'POST'])
+@records.route('/record/Ente', methods=['GET', 'POST'])
 @login_required
 def entertainment():
     return mongo_filter('Entertainment')
 
 
-@app.route('/record/Pers', methods=['GET', 'POST'])
+@records.route('/record/Pers', methods=['GET', 'POST'])
 @login_required
 def personal_care():
     return mongo_filter('Personal Care')
 
 
-@app.route('/record/Heal', methods=['GET', 'POST'])
+@records.route('/record/Heal', methods=['GET', 'POST'])
 @login_required
 def health():
     return mongo_filter('Health and Fitness')
 
 
-@app.route('/record/Tran', methods=['GET', 'POST'])
+@records.route('/record/Tran', methods=['GET', 'POST'])
 @login_required
 def transport():
     return mongo_filter('Transport and Auto')
 
 
-@app.route('/record/Fees', methods=['GET', 'POST'])
+@records.route('/record/Fees', methods=['GET', 'POST'])
 @login_required
 def fees():
     return mongo_filter('Fees and Charges')
 
 
-@app.route('/record/Educ', methods=['GET', 'POST'])
+@records.route('/record/Educ', methods=['GET', 'POST'])
 @login_required
 def education():
     return mongo_filter('Education')
 
 
-@app.route('/record/Gift', methods=['GET', 'POST'])
+@records.route('/record/Gift', methods=['GET', 'POST'])
 @login_required
 def gift():
     return mongo_filter('Gifts and Donation')
 
 
-@app.route('/record/Busi', methods=['GET', 'POST'])
+@records.route('/record/Busi', methods=['GET', 'POST'])
 @login_required
 def business():
     return mongo_filter('Business Services')
 
 
-@app.route('/record/Inve', methods=['GET', 'POST'])
+@records.route('/record/Inve', methods=['GET', 'POST'])
 @login_required
 def investment():
     return mongo_filter('Investment')
 
 
-@app.route('/record/Trav', methods=['GET', 'POST'])
+@records.route('/record/Trav', methods=['GET', 'POST'])
 @login_required
 def travel():
     return mongo_filter('Travel')
 
 
-@app.route('/record/Kids', methods=['GET', 'POST'])
+@records.route('/record/Kids', methods=['GET', 'POST'])
 @login_required
 def kids_elderly():
     return mongo_filter('Kids and Elderly')
 
 
-@app.route('/record/Taxe', methods=['GET', 'POST'])
+@records.route('/record/Taxe', methods=['GET', 'POST'])
 @login_required
 def taxes():
     return mongo_filter('Taxes')
 
 
-@app.route('/record/Othe', methods=['GET', 'POST'])
+@records.route('/record/Othe', methods=['GET', 'POST'])
 @login_required
 def others():
     return mongo_filter('Others')
 
 
-@app.route('/edit/<record_id>', methods=['GET', 'POST'])
+@records.route('/edit/<record_id>', methods=['GET', 'POST'])
 @login_required
 def edit(record_id):
     form = EditForm()
@@ -361,15 +185,15 @@ def edit(record_id):
             }
         })
         flash('The Record Has Been Updated!', 'success')
-        return redirect(url_for('record'))
+        return redirect(url_for('records.record'))
     elif delete_form.submit_delete.data and delete_form.is_submitted():
         connection.delete_one({'_id': ObjectId(record_id)})
         flash('The Record Has Been Deleted!', 'success')
-        return redirect(url_for('record'))
+        return redirect(url_for('records.record'))
     return render_template('edit.html', title='Edit', form=form, record=record, delete_form=delete_form)
 
 
-@app.route('/chart', methods=['GET', 'POST'])
+@records.route('/chart', methods=['GET', 'POST'])
 @login_required
 def chart():
     connection = mongo.db.records
@@ -882,7 +706,7 @@ def chart():
                            total_amount_month=total_amount_month, total_amount_all=total_amount_all)
 
 
-@app.route('/record', methods=['GET', 'POST'])
+@records.route('/record', methods=['GET', 'POST'])
 @login_required
 def record():
     form = EditForm()
@@ -1394,51 +1218,3 @@ def record():
                            sorted_by_amount_month=sorted_by_amount_month, currency=currency,
                            total_amount_today=total_amount_today, total_amount_week=total_amount_week,
                            total_amount_month=total_amount_month, total_amount_all=total_amount_all)
-
-
-def send_reset_email(user, user_id, user_fname, user_lname):
-    token = get_reset_token(user_id)
-    msg = Message('Wallet Watcher Password Reset Request -- {} {}'.format(user_fname, user_lname),
-                  sender='noreply@googlemail.com',
-                  recipients=[user, 'raymondcyang0219@gmail.com'])
-    msg.body = '''To reset your password, visit the following link:
-{}
-If you did not make this request then simply ignore this email and no changes will be made.
-'''.format(url_for('reset_token', token=token, _external=True))
-    mail.send(msg)
-
-
-@app.route('/reset_password', methods=['GET', 'POST'])
-def reset_request():
-    if current_user.is_authenticated:
-        return redirect(url_for('enter'))
-    form = RequestResetForm()
-    if form.validate_on_submit():
-        connection = mongo.db.users
-        user = connection.find_one({'email': form.email.data})
-        user_id = str(user['_id'])
-        user_fname = user['first_name']
-        user_lname = user['last_name']
-        send_reset_email(form.email.data, user_id, user_fname, user_lname)
-        flash('An email has been sent with instructions to reset your password.', 'info')
-        return redirect(url_for('login'))
-    return render_template('reset_request.html', title='Reset Password', form=form)
-
-
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_token(token):
-    connection = mongo.db.users
-    if current_user.is_authenticated:
-        return redirect(url_for('enter'))
-    user = verify_reset_token(token)
-    if user is None:
-        flash('That is an invalid or expired token.', 'warning')
-        return redirect(url_for('reset_request'))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
-        connection.update({'_id': ObjectId(user['_id'])}, {'$set': {'password': hashed_password}})
-        flash('Your password has been updated! You are now able to log in.', 'success')
-        return redirect(url_for('login'))
-    return render_template('reset_token.html', title='Reset Password', form=form)
-
