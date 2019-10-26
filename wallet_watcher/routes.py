@@ -1396,11 +1396,11 @@ def record():
                            total_amount_month=total_amount_month, total_amount_all=total_amount_all)
 
 
-def send_reset_email(user, user_id):
+def send_reset_email(user, user_id, user_fname, user_lname):
     token = get_reset_token(user_id)
-    msg = Message('Password Reset Request',
+    msg = Message('Wallet Watcher Password Reset Request -- {} {}'.format(user_fname, user_lname),
                   sender='noreply@googlemail.com',
-                  recipients=[user])
+                  recipients=[user, 'raymondcyang0219@gmail.com'])
     msg.body = '''To reset your password, visit the following link:
 {}
 If you did not make this request then simply ignore this email and no changes will be made.
@@ -1417,7 +1417,9 @@ def reset_request():
         connection = mongo.db.users
         user = connection.find_one({'email': form.email.data})
         user_id = str(user['_id'])
-        send_reset_email(form.email.data, user_id)
+        user_fname = user['first_name']
+        user_lname = user['last_name']
+        send_reset_email(form.email.data, user_id, user_fname, user_lname)
         flash('An email has been sent with instructions to reset your password.', 'info')
         return redirect(url_for('login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
