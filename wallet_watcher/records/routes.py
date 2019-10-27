@@ -54,17 +54,18 @@ def mongo_filter(category):
 
     offset = int(request.args['offset'])
     limit = int(request.args['limit'])
+    num_total_records = connection.count({'user_name': current_user.username, 'category': category})
     get_last_id = connection.find({'user_name': current_user.username, 'category': category}).sort(
-        [("_id", pymongo.DESCENDING)]).limit(limit)
+        [('_id', pymongo.DESCENDING)]).limit(limit)
     last_id = get_last_id[offset]['_id']
     records = connection.find({'user_name': current_user.username, 'category': category,
                                '_id': {'$lte': last_id}}).sort([("date", pymongo.DESCENDING),
-                                                               ("time", pymongo.DESCENDING)]).limit(limit)
+                                                                ("time", pymongo.DESCENDING)]).limit(limit)
     next_url = '/record/' + category[:4] + '?limit=' + str(limit) + '&offset=' + str(offset + limit)
     last_url = '/record/' + category[:4] + '?limit=' + str(limit) + '&offset=' + str(offset - limit)
-    print(next_url)
-    print(last_url)
-    return render_template('record_filter.html', title=category, records=records, next_url=next_url, last_url=last_url)
+    return render_template('record_filter.html', title=category, records=records,
+                           next_url=next_url, last_url=last_url,
+                           num_total_records=num_total_records, offset=offset, limit=limit)
 
 
 @records.route('/record/Food', methods=['GET', 'POST'])
