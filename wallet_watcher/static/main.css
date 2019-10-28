@@ -29,8 +29,8 @@ form{
 }
 
 .square {
-		height: 350px;
-		width: 350px;
+		height: 250px;
+		width: 250px;
 		background-color: #afa;
 	    display: inline-block;
 }

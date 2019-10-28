@@ -25,7 +25,9 @@ mail = Mail(app)
 from wallet_watcher.main.routes import main
 from wallet_watcher.records.routes import records
 from wallet_watcher.users.routes import users
+from wallet_watcher.errors.handlers import errors
 
 app.register_blueprint(main)
 app.register_blueprint(records)
 app.register_blueprint(users)
+app.register_blueprint(errors)
